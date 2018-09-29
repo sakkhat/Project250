@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_home"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="2dp"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    tools:context="sakkhat.com.p250.Home">
+
+    <TextView
+        android:text="Jarvis"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:background="@color/darkGreen"
+        android:layout_weight=".7"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+    <FrameLayout
+        android:id="@+id/home_frame"
+        android:layout_weight="8.5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+    </FrameLayout>
+    <github.hellocsl.cursorwheel.CursorWheelLayout
+        android:id="@+id/menu_wheel"
+        app:wheelSelectedAngle="270"
+        app:wheelItemRotateMode="none"
+        app:wheelCursorHeight="10dp"
+        app:wheelCursorColor="@color/white"
+        android:layout_gravity="center_horizontal|center_vertical|bottom"
+        android:layout_marginBottom="-160dp"
+        android:layout_width="270dp"
+        android:layout_height="270dp">
+    </github.hellocsl.cursorwheel.CursorWheelLayout>
+</LinearLayout>
