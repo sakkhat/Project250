@@ -9,12 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sakkhat.com.p250.R;
+import sakkhat.com.p250.fragments.p2p.FragmentListener;
 
 public class FragmentJarvis extends Fragment {
 
     private View root;
     private Context context;
 
+    private FragmentListener fragmentListener;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -23,6 +25,9 @@ public class FragmentJarvis extends Fragment {
         return root;
     }
 
+    public void setFragmentListener(FragmentListener fragmentListener){
+        this.fragmentListener = fragmentListener;
+    }
     private void init(){
         /*
         * instance and initialize

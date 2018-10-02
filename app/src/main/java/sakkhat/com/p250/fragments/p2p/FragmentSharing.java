@@ -1,34 +1,45 @@
-package sakkhat.com.p250.fragments;
+package sakkhat.com.p250.fragments.p2p;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import sakkhat.com.p250.Home;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.WiFiStateReceiver;
 
 public class FragmentSharing extends Fragment {
 
     public static final String TAG = "fragment_sharing";
+    public static final String CONNECTION_INFO = "$c-$s";
+
+    public static final int ID = 1000;
 
     private View root;
     private Context context;
@@ -50,11 +61,10 @@ public class FragmentSharing extends Fragment {
     private IntentFilter p2pIntentFilter;
 
     private List<WifiP2pDevice> scannedPeers;
-    private ArrayList<String> availableDevices;
+    private ArrayList<String> availableDevicesNames;
     private ArrayAdapter<String> peersAdapter;
 
-    private ArrayList<WifiP2pDevice> list = new ArrayList<>();
-
+    private FragmentListener fragmentListener;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,6 +76,9 @@ public class FragmentSharing extends Fragment {
         return root;
     }
 
+    public void setFragmentListener(FragmentListener fragmentListener){
+        this.fragmentListener = fragmentListener;
+    }
     private void init(){
         /*
         *  instance of context and view stuff
@@ -78,11 +91,11 @@ public class FragmentSharing extends Fragment {
         peerListLoading = root.findViewById(R.id.frag_share_list_loading);
         peerListRefresh = root.findViewById(R.id.frag_share_peer_refresh);
 
-        // initialize the device name array
-        availableDevices = new ArrayList<>();
+        // initialize the device array
+        availableDevicesNames = new ArrayList<>();
 
         // array adapter for device list view
-        peersAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,availableDevices);
+        peersAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_1,availableDevicesNames);
         // set the adapter in list view
         peerListView.setAdapter(peersAdapter);
 
@@ -90,10 +103,20 @@ public class FragmentSharing extends Fragment {
         peerListRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                availableDevices.clear();
+                availableDevicesNames.clear();
                 peersAdapter.notifyDataSetChanged();
                 peerListLoading.setVisibility(View.VISIBLE);
                 p2pManager.discoverPeers(p2pChannel, p2pActionListener);
+            }
+        });
+
+        // set item click listener on device list view
+        peerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                WifiP2pConfig config = new WifiP2pConfig();
+                config.deviceAddress = scannedPeers.get(position).deviceAddress;
+                p2pManager.connect(p2pChannel,config,p2pActionListener);
             }
         });
 
@@ -141,7 +164,7 @@ public class FragmentSharing extends Fragment {
         super.onPause();
         context.unregisterReceiver(wifiStateReceiver);
         // clear previous peers
-        availableDevices.clear();
+        availableDevicesNames.clear();
         Log.d(TAG,"WiFi state receiver unregistered");
     }
 
@@ -157,12 +180,11 @@ public class FragmentSharing extends Fragment {
                 scannedPeers.addAll(currentPeers.getDeviceList());
                 // add items from scanned list to available device list for list view
                 for(WifiP2pDevice device: scannedPeers){
-                    availableDevices.add(device.deviceName);
+                    availableDevicesNames.add(device.deviceName);
                 }
                 // notify the list adapter for update peer list visible
                 peersAdapter.notifyDataSetChanged();
 
-                list.addAll(scannedPeers);
                 Log.d(TAG,"new peer list created");
             }
             else if(! currentPeers.getDeviceList().equals(scannedPeers)){
@@ -171,28 +193,18 @@ public class FragmentSharing extends Fragment {
                 // update the scanned list with new peers
                 scannedPeers.addAll(currentPeers.getDeviceList());
                 // clear the available device list
-                availableDevices.clear();
+                availableDevicesNames.clear();
                 // notify the adapter
                 peersAdapter.notifyDataSetChanged();
                 // add new peers for list view items
                 for(WifiP2pDevice device: scannedPeers){
-                    availableDevices.add(device.deviceName);
+                    availableDevicesNames.add(device.deviceName);
                 }
                 // notify the adapter
                 peersAdapter.notifyDataSetChanged();
 
-
-                list.addAll(scannedPeers);
                 Log.d(TAG, "peer list updated");
             }
-
-            for(WifiP2pDevice d: list){
-                Log.w("item",d.deviceName);
-                Log.w("item",d.deviceAddress);
-                Log.w("item",Integer.toString(d.status));
-                Log.w("item",d.primaryDeviceType);
-            }
-
             // progress bar removed
             peerListLoading.setVisibility(View.GONE);
 
@@ -216,6 +228,20 @@ public class FragmentSharing extends Fragment {
             else {
                 Log.e(TAG,"p2p listener failed");
             }
+        }
+    };
+
+    public WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+        @Override
+        public void onConnectionInfoAvailable(WifiP2pInfo info) {
+            // create a bundle for data package
+            Bundle bundle = new Bundle();
+            // set bundle tag
+            bundle.putString(Home.FRAGMENT_TAG,TAG);
+            // set config info for P2P sharing
+            bundle.putParcelable(CONNECTION_INFO,info);
+            // communicate with activity
+            fragmentListener.onResponse(bundle);
         }
     };
 }

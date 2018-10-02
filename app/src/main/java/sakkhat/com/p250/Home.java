@@ -1,7 +1,7 @@
 package sakkhat.com.p250;
 
-import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pManager;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,22 +10,25 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import github.hellocsl.cursorwheel.CursorWheelLayout;
 import sakkhat.com.p250.adapter.MenuWheelAdapter;
-import sakkhat.com.p250.broadcaster.WiFiStateReceiver;
 import sakkhat.com.p250.fragments.FragmentAccessories;
 import sakkhat.com.p250.fragments.FragmentJarvis;
-import sakkhat.com.p250.fragments.FragmentSharing;
+import sakkhat.com.p250.fragments.p2p.FragmentIO;
+import sakkhat.com.p250.fragments.p2p.FragmentListener;
+import sakkhat.com.p250.fragments.p2p.FragmentSharing;
 import sakkhat.com.p250.structure.MenuItem;
 
-public class Home extends AppCompatActivity implements CursorWheelLayout.OnMenuSelectedListener{
+public class Home extends AppCompatActivity
+        implements CursorWheelLayout.OnMenuSelectedListener,FragmentListener{
 
     public static final String TAG = "home_view";
+
+    public static final String FRAGMENT_TAG = "fragment_id";
 
     public FragmentManager fragmentManager;
     public FrameLayout homeFrame;
@@ -89,29 +92,61 @@ public class Home extends AppCompatActivity implements CursorWheelLayout.OnMenuS
         *  pos 2: Jarvis : FragmentJarvis
         * */
         switch (pos){
-            case 0: replaceFragment(new FragmentAccessories());
-                break;
-            case 1: replaceFragment(new FragmentSharing());
-                break;
-            case 2: replaceFragment(new FragmentJarvis());
-                break;
+            case 0: {
+                FragmentAccessories accessories = new FragmentAccessories();
+                accessories.setFragmentListener(this);
+                replaceFragment(accessories, false);
+            }   break;
+            case 1: {
+                FragmentSharing sharing = new FragmentSharing();
+                sharing.setFragmentListener(this);
+                replaceFragment(sharing, false);
+            }   break;
+            case 2: {
+                FragmentJarvis jarvis = new FragmentJarvis();
+                jarvis.setFragmentListener(this);
+                replaceFragment(jarvis, false);
+            }   break;
         }
         Log.d(TAG,menuItems.get(pos).getName());
     }
 
-    private void replaceFragment(Fragment newFragment){
+    private void replaceFragment(Fragment newFragment, boolean isStacked){
         // take the current fragment
         Fragment oldFragment = fragmentManager.findFragmentById(homeFrame.getId());
         // check whether it request for current fragment -> then return
         if(oldFragment == newFragment){
+            // null reference the new fragment for through in garbage collection
+            newFragment = null;
             Log.w(TAG,"fragement request is not accepted");
             return;
         }
         // set the new fragment
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(homeFrame.getId(),newFragment);
+        // if stacked then fragment will attach a independent layer
+        if(isStacked){
+            transaction.addToBackStack(newFragment.getClass().getName());
+        }
         transaction.commit();
 
         Log.d(TAG,"fragment replaced from "+oldFragment+" to "+newFragment);
+    }
+
+    @Override
+    public void onResponse(Bundle bundle) {
+
+        String caller = bundle.getString(FRAGMENT_TAG);
+
+        switch (caller){
+            // P2P sharing fragment
+            case FragmentSharing.TAG:{
+                FragmentIO fragmentIO = new FragmentIO();
+                WifiP2pInfo info = (WifiP2pInfo)bundle.getParcelable(FragmentSharing.CONNECTION_INFO);
+                fragmentIO.setInfo(info);
+                fragmentIO.setFragmentListener(this);
+                replaceFragment(fragmentIO,true);
+            }   break;
+        }
     }
 }

@@ -13,6 +13,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import sakkhat.com.p250.R;
+import sakkhat.com.p250.fragments.p2p.FragmentListener;
 
 public class FragmentAccessories extends Fragment {
 
@@ -21,6 +22,7 @@ public class FragmentAccessories extends Fragment {
 
     private Switch nightLightSwitch;
     private SeekBar nightLighBar;
+    private FragmentListener fragmentListener;
 
     @Nullable
     @Override
@@ -28,6 +30,9 @@ public class FragmentAccessories extends Fragment {
         root = inflater.inflate(R.layout.fragment_accessories,null,false);
         init();
         return root;
+    }
+    public void setFragmentListener(FragmentListener fragmentListener){
+        this.fragmentListener = fragmentListener;
     }
 
     private void init(){

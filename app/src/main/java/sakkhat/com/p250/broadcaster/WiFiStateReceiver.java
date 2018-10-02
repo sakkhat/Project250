@@ -3,10 +3,12 @@ package sakkhat.com.p250.broadcaster;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.util.Log;
 import android.widget.Toast;
 
-import sakkhat.com.p250.fragments.FragmentSharing;
+import sakkhat.com.p250.fragments.p2p.FragmentSharing;
 
 /**
  * Created by hp on 29-Sep-18.
@@ -43,7 +45,16 @@ public class WiFiStateReceiver extends BroadcastReceiver {
             p2pManager.requestPeers(p2pChannel,activity.peerListListener);
         }
         else if(action.equals(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)){
-
+            if(p2pManager == null){
+                Log.w(activity.TAG, "null channel");
+                return;
+            }
+            // network established
+            NetworkInfo netInfo = (NetworkInfo)intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+            if(netInfo.isConnected()){
+                Log.d(activity.TAG,"device connected");
+                p2pManager.requestConnectionInfo(p2pChannel,activity.connectionInfoListener);
+            }
         }
         else if(action.equals(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)){
 

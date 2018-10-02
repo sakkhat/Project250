@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_io"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_wheel"
+    tools:context="sakkhat.com.p250.fragments.p2p.FragmentIO">
+
+    <TextView
+        android:id="@+id/frag_io_peer_name"
+        android:text="Connected: "
+        android:textColor="@color/white"
+        android:padding="5dp"
+        android:textSize="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/frag_io_upload"
+        android:src="@drawable/ic_file_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/frag_io_download"
+        android:layout_marginTop="163dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/frag_io_download"
+        android:src="@drawable/ic_file_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frag_io_upload"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
