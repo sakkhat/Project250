@@ -1,7 +1,6 @@
 package sakkhat.com.p250;
 
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pInfo;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,10 +16,10 @@ import java.util.List;
 import github.hellocsl.cursorwheel.CursorWheelLayout;
 import sakkhat.com.p250.adapter.MenuWheelAdapter;
 import sakkhat.com.p250.fragments.FragmentAccessories;
-import sakkhat.com.p250.fragments.FragmentJarvis;
-import sakkhat.com.p250.fragments.p2p.FragmentIO;
-import sakkhat.com.p250.fragments.p2p.FragmentListener;
-import sakkhat.com.p250.fragments.p2p.FragmentSharing;
+import sakkhat.com.p250.jarvis.FragmentJarvis;
+import sakkhat.com.p250.fragments.FragmentListener;
+import sakkhat.com.p250.p2p.DataSharing;
+import sakkhat.com.p250.p2p.FragmentSharing;
 import sakkhat.com.p250.structure.MenuItem;
 
 public class Home extends AppCompatActivity
@@ -141,12 +140,11 @@ public class Home extends AppCompatActivity
         switch (caller){
             // P2P sharing fragment
             case FragmentSharing.TAG:{
-                FragmentIO fragmentIO = new FragmentIO();
-                WifiP2pInfo info = (WifiP2pInfo)bundle.getParcelable(FragmentSharing.CONNECTION_INFO);
-                fragmentIO.setInfo(info);
-                fragmentIO.setFragmentListener(this);
-                replaceFragment(fragmentIO,true);
+                Intent intent = new Intent(this, DataSharing.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }   break;
         }
     }
+
 }

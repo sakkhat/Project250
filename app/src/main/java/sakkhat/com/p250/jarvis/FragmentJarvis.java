@@ -1,4 +1,4 @@
-package sakkhat.com.p250.fragments;
+package sakkhat.com.p250.jarvis;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sakkhat.com.p250.R;
-import sakkhat.com.p250.fragments.p2p.FragmentListener;
+import sakkhat.com.p250.fragments.FragmentListener;
 
 public class FragmentJarvis extends Fragment {
 

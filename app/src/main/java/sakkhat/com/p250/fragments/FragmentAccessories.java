@@ -13,7 +13,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import sakkhat.com.p250.R;
-import sakkhat.com.p250.fragments.p2p.FragmentListener;
 
 public class FragmentAccessories extends Fragment {
 

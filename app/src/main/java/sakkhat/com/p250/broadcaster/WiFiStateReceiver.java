@@ -8,7 +8,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import sakkhat.com.p250.fragments.p2p.FragmentSharing;
+import sakkhat.com.p250.p2p.FragmentSharing;
 
 /**
  * Created by hp on 29-Sep-18.

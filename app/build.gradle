@@ -26,12 +26,13 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
     testCompile 'junit:junit:4.12'
-
     // cursor wheel layout :: https://github.com/BCsl/CursorWheelLayout
     compile 'github.hellocsl:CursorWheelLayout:1.1.0'
     // circle image view :: https://github.com/hdodenhof/CircleImageView
     compile 'de.hdodenhof:circleimageview:2.2.0'
-
     compile 'com.android.support:design:26.0.0-alpha1'
     compile 'com.android.support:cardview-v7:26.0.0-alpha1'
+    // api.ai for jarvis : https://github.com/dialogflow/dialogflow-android-client
+    compile 'ai.api:sdk:2.0.7@aar'
+    compile 'ai.api:libai:1.6.12'
 }

@@ -1,6 +1,5 @@
-package sakkhat.com.p250.fragments.p2p;
+package sakkhat.com.p250.p2p;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -12,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,17 +20,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 import sakkhat.com.p250.Home;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.WiFiStateReceiver;
+import sakkhat.com.p250.fragments.FragmentListener;
 
 public class FragmentSharing extends Fragment {
 

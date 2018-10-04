@@ -1,4 +1,4 @@
-package sakkhat.com.p250.fragments.p2p;
+package sakkhat.com.p250.fragments;
 
 import android.os.Bundle;
 
