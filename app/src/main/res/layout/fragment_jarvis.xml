@@ -8,8 +8,18 @@
     tools:context="sakkhat.com.p250.jarvis.FragmentJarvis">
 
     <ImageView
+        android:id="@+id/frag_jarvis_icon"
         android:src="@drawable/ic_jarvis"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
+    <TextView
+        android:id="@+id/frag_jarvis_result"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="15dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

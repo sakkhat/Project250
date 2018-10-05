@@ -36,4 +36,11 @@
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
+
+    <Button
+        android:id="@+id/frag_access_flow_widget"
+        android:text="Run Flow Widget"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

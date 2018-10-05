@@ -27,6 +27,18 @@
         <service
             android:name=".services.NightLightService"
             android:exported="false" />
+        <service android:name=".services.FloatingWidget"
+            android:stopWithTask="false"
+            android:enabled="true"/>
+        <receiver
+            android:name=".broadcaster.ServiceStopper"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="ServiceStopper"/>
+            </intent-filter>
+
+        </receiver>
 
         <activity android:name=".p2p.DataSharing"></activity>
     </application>
