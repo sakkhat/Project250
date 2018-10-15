@@ -7,4 +7,5 @@
     <color name="black">#000000</color>
     <color name="mateBlack">#141414</color>
     <color name="darkGreen">#128650</color>
+    <color name="nightFilter">#5e3f4000</color>
 </resources>

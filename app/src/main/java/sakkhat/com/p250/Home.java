@@ -15,9 +15,9 @@ import java.util.List;
 
 import github.hellocsl.cursorwheel.CursorWheelLayout;
 import sakkhat.com.p250.adapter.MenuWheelAdapter;
-import sakkhat.com.p250.fragments.FragmentAccessories;
+import sakkhat.com.p250.accessories.FragmentAccessories;
 import sakkhat.com.p250.jarvis.FragmentJarvis;
-import sakkhat.com.p250.fragments.FragmentListener;
+import sakkhat.com.p250.helper.FragmentListener;
 import sakkhat.com.p250.p2p.DataSharing;
 import sakkhat.com.p250.p2p.FragmentSharing;
 import sakkhat.com.p250.structure.MenuItem;
@@ -93,7 +93,7 @@ public class Home extends AppCompatActivity
         switch (pos){
             case 0: {
                 FragmentAccessories accessories = new FragmentAccessories();
-                accessories.setFragmentListener(this);
+                //accessories.setFragmentListener(this);
                 replaceFragment(accessories, false);
             }   break;
             case 1: {

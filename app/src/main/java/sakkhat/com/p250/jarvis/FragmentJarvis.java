@@ -1,7 +1,6 @@
 package sakkhat.com.p250.jarvis;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import com.google.gson.JsonElement;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import ai.api.AIListener;
@@ -26,7 +24,7 @@ import ai.api.model.AIResponse;
 import ai.api.model.ResponseMessage;
 import ai.api.model.Result;
 import sakkhat.com.p250.R;
-import sakkhat.com.p250.fragments.FragmentListener;
+import sakkhat.com.p250.helper.FragmentListener;
 
 public class FragmentJarvis extends Fragment
         implements AIListener{

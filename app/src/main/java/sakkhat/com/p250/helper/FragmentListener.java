@@ -1,9 +1,9 @@
-package sakkhat.com.p250.fragments;
+package sakkhat.com.p250.helper;
 
 import android.os.Bundle;
 
 /**
- * Created by hp on 03-Oct-18.
+ * Created by Rafiul Islam on 03-Oct-18.
  */
 
 public interface FragmentListener {
@@ -14,5 +14,9 @@ public interface FragmentListener {
     * For this when fragment call the onResponse with  a bundle this actually call the
     * activity's implemented onResponse method and do a particular task.
     * */
+
+    /**
+     * @param bundle Data bundle from fragment to activity
+     * */
     public void onResponse(Bundle bundle);
 }

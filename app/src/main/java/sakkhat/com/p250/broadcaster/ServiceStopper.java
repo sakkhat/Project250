@@ -8,7 +8,7 @@ import android.util.Log;
 import sakkhat.com.p250.services.FloatingWidget;
 
 /**
- * Created by hp on 05-Oct-18.
+ * Created by Rafiul Islam on 05-Oct-18.
  */
 
 public class ServiceStopper extends BroadcastReceiver {
