@@ -18,7 +18,6 @@ import sakkhat.com.p250.adapter.MenuWheelAdapter;
 import sakkhat.com.p250.accessories.FragmentAccessories;
 import sakkhat.com.p250.jarvis.FragmentJarvis;
 import sakkhat.com.p250.helper.FragmentListener;
-import sakkhat.com.p250.p2p.DataSharing;
 import sakkhat.com.p250.p2p.FragmentSharing;
 import sakkhat.com.p250.structure.MenuItem;
 
@@ -98,7 +97,6 @@ public class Home extends AppCompatActivity
             }   break;
             case 1: {
                 FragmentSharing sharing = new FragmentSharing();
-                sharing.setFragmentListener(this);
                 replaceFragment(sharing, false);
             }   break;
             case 2: {
@@ -140,9 +138,7 @@ public class Home extends AppCompatActivity
         switch (caller){
             // P2P sharing fragment
             case FragmentSharing.TAG:{
-                Intent intent = new Intent(this, DataSharing.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+
             }   break;
         }
     }

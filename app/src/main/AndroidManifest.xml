@@ -8,10 +8,9 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:allowBackup="true"
@@ -30,24 +29,25 @@
         <service
             android:name=".services.NightLightService"
             android:exported="false" />
-        <service android:name=".services.FloatingWidget"
-            android:stopWithTask="false"
-            android:enabled="true"/>
+        <service
+            android:name=".services.FloatingWidget"
+            android:enabled="true"
+            android:stopWithTask="false" />
+
         <receiver
             android:name=".broadcaster.ServiceStopper"
-            android:exported="true"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="ServiceStopper"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".broadcaster.ServiceUpater"
             android:enabled="true"
             android:exported="true">
+            <intent-filter>
+                <action android:name="ServiceStopper" />
+            </intent-filter>
         </receiver>
+        <receiver
+            android:name=".broadcaster.ServiceUpater"
+            android:enabled="true"
+            android:exported="true"></receiver>
 
-        <activity android:name=".p2p.DataSharing"></activity>
+        <activity android:name=".p2p.OneToOne"></activity>
     </application>
 
 </manifest>

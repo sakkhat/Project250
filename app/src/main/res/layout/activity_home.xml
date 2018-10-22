@@ -10,16 +10,6 @@
     android:paddingLeft="2dp"
     android:paddingRight="2dp"
     tools:context="sakkhat.com.p250.Home">
-
-    <TextView
-        android:text="Jarvis"
-        android:textSize="25dp"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:background="@color/darkGreen"
-        android:layout_weight=".7"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
     <FrameLayout
         android:id="@+id/home_frame"
         android:layout_weight="8.5"
