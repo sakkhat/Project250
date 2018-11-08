@@ -14,8 +14,15 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.ServiceUpater;
+import sakkhat.com.p250.helper.FileUtil;
 import sakkhat.com.p250.helper.FragmentListener;
 import sakkhat.com.p250.helper.Memory;
 import sakkhat.com.p250.services.NightLightService;
@@ -30,12 +37,24 @@ public class FragmentAccessories extends Fragment{
     private SeekBar nightLightBar;
     private Switch nightLightSwitch;
 
+    private Button btTest;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_accessories,null,false);
         context = getContext();
         init(); // initialization of other stuffs
+
+        btTest = (Button)root.findViewById(R.id.bt_test);
+        btTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.setType("*/*");
+                startActivityForResult(i, 2);
+            }
+        });
         return root;
     }
 
@@ -110,5 +129,31 @@ public class FragmentAccessories extends Fragment{
             }
         });
         //------------------------------------------------------------------------------------------------
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == getActivity().RESULT_OK){
+            if(requestCode == 2){
+                Log.e(TAG, data.getData().toString());
+                String s = FileUtil.getPath(context, data.getData());
+                if(s != null){
+                    File f = new File(s);
+                    Log.w(TAG, f.getName());
+                    Log.w(TAG, Long.toString(f.length()));
+
+                    try {
+                        FileInputStream fis = new FileInputStream(s);
+                        fis.close();
+                    } catch (FileNotFoundException e) {
+                        Log.e(TAG, e.toString());
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+
+                }
+
+            }
+        }
     }
 }

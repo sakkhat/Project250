@@ -1,6 +1,6 @@
+
 package sakkhat.com.p250.p2p;
 
-import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -246,14 +246,9 @@ class O2O {
          * data output stream first sent the file nama and file size.
          * The write the file on buffed output stream 64kb per time.
          *
-         * @param uri explored file uri data.
+         * @param file explored file for sent.
          * */
-        public void send(Uri uri){
-
-            // access the file using the uri path location
-            File file = new File(uri.toString());
-            // get the absolute file
-            file = file.getAbsoluteFile();
+        public void send(File file){
 
             try {
                 // sent the file name

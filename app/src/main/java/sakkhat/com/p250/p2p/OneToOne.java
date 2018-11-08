@@ -30,6 +30,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.WiFiStateReceiver;
+import sakkhat.com.p250.helper.FileUtil;
 
 public class OneToOne extends AppCompatActivity
         implements View.OnClickListener,WifiP2pManager.PeerListListener,WifiP2pManager.ConnectionInfoListener{
@@ -244,17 +245,15 @@ public class OneToOne extends AppCompatActivity
         // obtain the preferred conditions
         if(resultCode != RESULT_OK) return;
         if(requestCode != FILE_TAKE_REQUEST) return;
-        Log.d(TAG, "selected file: "+data.getData().getPath());
-        // get the data and request to sent
-        //dataIO.send(data.getData());
 
+        String path = FileUtil.getPath(this, data.getData());
+        if(path != null){
+            File file = new File(path);
+            dataIO.send(file);
+        }
         Log.w(TAG, data.getData().toString());
 
-        File f = new File(data.getData().getPath());
-
-        Log.w(TAG, f.getName());
-        Log.w(TAG, f.getAbsolutePath());
-
+        
     }
 
     @Override
