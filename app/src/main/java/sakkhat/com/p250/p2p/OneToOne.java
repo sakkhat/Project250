@@ -24,8 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import sakkhat.com.p250.R;
@@ -66,7 +69,8 @@ public class OneToOne extends AppCompatActivity
     private List<WifiP2pDevice> deviceList;
     private ArrayAdapter<String> arrayAdapter;
 
-    private O2O.DataIO dataIO;
+    private ExecutorService execService; // socket reading and writing thread service
+    private volatile Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,7 +253,7 @@ public class OneToOne extends AppCompatActivity
         String path = FileUtil.getPath(this, data.getData());
         if(path != null){
             File file = new File(path);
-            dataIO.send(file);
+            execService.execute(new O2O.Sender(socket,handler, file));
         }
         Log.w(TAG, data.getData().toString());
 
@@ -298,6 +302,13 @@ public class OneToOne extends AppCompatActivity
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
 
         /**
+         * 2 fixed thread for socket connection established, socket reading and socket writing.
+         * thread-1 : socket established -> socket reading
+         * thread-2 : socket writing
+         * */
+        execService = Executors.newFixedThreadPool(2);
+
+        /**
          * Condition for server device.
          * @param dataIO pass the reference of dataIO to server thread. Server thread will set this
          *               dataIO to start the I/O communication between I/O stream and UI using DataIO thread.
@@ -305,9 +316,7 @@ public class OneToOne extends AppCompatActivity
          *                dataIO an external thread can communication with this activity and it's UI.
          * */
         if(info.isGroupOwner && info.groupFormed){
-            dataIO = new O2O.DataIO(handler);
-            O2O.Server server = new O2O.Server(dataIO);
-
+            execService.execute(new O2O.Server(handler));
         }
         /**
          * Condition for client device.
@@ -319,8 +328,7 @@ public class OneToOne extends AppCompatActivity
          *                dataIO an external thread can communication with this activity and it's UI.
          * */
         else if(info.groupFormed){
-            dataIO = new O2O.DataIO(handler);
-            O2O.Client client = new O2O.Client(info.groupOwnerAddress,dataIO);
+            execService.execute(new O2O.Client(info.groupOwnerAddress, handler));
         }
     }
     /**
@@ -336,6 +344,16 @@ public class OneToOne extends AppCompatActivity
             if(msg.what == O2O.MESSAGE_FILE_RECEIVED){
                 File file = (File)msg.obj;
                 Log.d(TAG, file.getName());
+            }
+            else if(msg.what == O2O.MESSAGE_FILE_SENT){
+
+            }
+            else if(msg.what == O2O.MESSAGE_SOCKET_CONNECTED){
+                socket = (Socket)msg.obj;
+                execService.execute(new O2O.Receiver(socket,handler));
+            }
+            else if(msg.what == O2O.MESSAGE_IO_ERROR){
+                // handle the error
             }
             return false;
         }

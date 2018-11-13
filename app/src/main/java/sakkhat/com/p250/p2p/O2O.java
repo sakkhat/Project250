@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Rafiul Islam on 18-Oct-18.
@@ -23,140 +25,125 @@ import java.net.Socket;
 
 class O2O {
     /**
-     * O2O is a protected class with 3 protected inner static class those will provide a socket
+     * O2O is a protected class with 4 protected inner static class those will provide a socket
      * communication environment between two devices.
      *
      * @see Server
      * @see Client
-     * @see DataIO
+     * @see Receiver
+     * @see Sender
      *
      * @param PORT socket port from where this socket connection will be established.
-     * @param MESSAGE_READ_REQUEST request id for handler.
+     *
+     * @param MESSAGE_FILE_RECEIVED file received confirmation code for handler.
+     * @param MESSAGE_FILE_SENT file sent confirmation code for handler
+     * @param MESSAGE_SOCKET_CONNECTED socket connected confirmation code for handler
+     * @param MESSAGE_IO_ERROR socket and I/O error notify code for handler
+     *
      * @param PATH default directory to store the files.
      * */
-    private static final int PORT = 9191;
+    private static final int PORT = 31000;
     public static final int MESSAGE_FILE_RECEIVED = -1919191;
+    public static final int MESSAGE_FILE_SENT = -1919190;
+    public static final int MESSAGE_SOCKET_CONNECTED = -1919189;
+    public static final int MESSAGE_IO_ERROR = -19191988;
 
     public static final String PATH = Environment.getExternalStoragePublicDirectory(Environment
             .DIRECTORY_DOCUMENTS).getPath();
 
-    static class Server extends Thread{
+    static class Server implements Runnable{
         /**
-         * Server class is also a thread itself that will used to create a ServerSocket with O2O.PORT.
+         * Server class is a runnable implemented class to bind a ServerSocket with a defined
+         * port and accept a single socket request. Server class will be run in background and
+         * communicate with UI using handler. After accepted the socket request server will create
+         * its own socket and transfer to the base activity using handler.
          *
-         * Server initialize with a handler object that already instanced in base activity and
-         * a dataIO reference which will be initialized in server thread with this handler to
-         * make sure that the dataIO thread for the server can communication with the base
-         * activity UI.
-         *
-         * @param TAG name of the server thread
-         * @param dataIO reference a copy DataIO from base activity
-         * @param handler reference a copy of handler from base activity
+         * @param TAG tag name
+         * @param handler to established a communication between background thread and UI thread
          * */
         private static final String TAG = "o2o_server_thread";
-        private DataIO dataIO;
+        private Handler handler;
 
-
-        public Server(DataIO dataIO){
-            this.dataIO = dataIO;
-
-            this.setName(TAG);
-            this.start();
+        public Server(Handler handler){
+            this.handler = handler;
         }
-
 
         @Override
         public void run(){
             try{
                 ServerSocket ss = new ServerSocket(PORT);
                 Socket socket = ss.accept();
-                Log.d(TAG, "connected with: "+socket.getRemoteSocketAddress());
-                dataIO.setSocket(socket);
-
+                Log.d(TAG, "connected: "+socket.getRemoteSocketAddress());
+                // notify activity that socket is connected and send the socket to the activity
+                handler.obtainMessage(MESSAGE_SOCKET_CONNECTED, socket).sendToTarget();
             } catch (IOException ex){
-                Log.e(TAG, ex.getMessage());
+                Log.e(TAG, ex.toString());
             }
         }
     }
 
-    static class Client extends Thread{
+    static class Client implements Runnable{
         /**
-         * Client class is also a thread itself that will used to create a Socket with a
-         * host address and O2O.PORT
+         * Client class is a runnable implemented class for request a server-socket with server
+         * host address and opened port. Client class will run in background. Client class will
+         * communicate with its base activity using handler and report all log.
+         * After socket connected with the server-side the connected socket will be transferred to
+         * the base activity using handler.
          *
-         * Client initialize with the server host address, handler object that already instanced in
-         * base activity and a dataIO reference which will be initialized in server thread with this
-         * handler to make sure that the dataIO thread for the server can communication with the base
-         * activity UI.
-         *
-         * @param TAG name of the server thread
+         * @param TAG tag name
          * @param host INetAddress of the server device
-         * @param dataIO reference a copy DataIO from base activity
-         * @param handler reference a copy of handler from base activity
+         * @param handler to established a communication between background thread and UI thread
          * */
         private static final String TAG = "o2o_client_thread";
         private InetAddress host;
-        private DataIO dataIO;
+        private Handler handler;
 
-        public Client(InetAddress host, DataIO dataIO){
+
+        public Client(InetAddress host, Handler handler){
             this.host = host;
-            this.dataIO = dataIO;
-
-            this.setName(TAG);
-            this.start();
+            this.handler = handler;
         }
         @Override
         public void run(){
             try{
                 Socket socket = new Socket(host,PORT);
                 Log.d(TAG, "connected: "+socket.getRemoteSocketAddress());
-                dataIO.setSocket(socket);
+                handler.obtainMessage(MESSAGE_SOCKET_CONNECTED, socket).sendToTarget();
             } catch (IOException ex){
                 Log.e(TAG, ex.getMessage());
             }
         }
     }
 
-    static class DataIO extends Thread{
+
+    static class Receiver implements Runnable{
         /**
-         * DataIO class is a thread itself used to send and receive data between two sockets in
-         * background.
-         * Socket reference is for I/O buffer data and handler to make a request to base activity
-         * for pass the streamed data.
+         * Receiver class a runnable implemented class and used for checking upcoming
+         * message from remote socket. Receiver will check new upcoming message from remote
+         * socket till the its own socket connected. Receiver will run in background.
          *
-         * @param TAG thread name
-         * @param socket reference
-         * @param handler handler reference
-         * @param bos write byte data on bufferd output stream
-         * @param bis read byte data from  buffered input stream
-         * @param dis read particular data type from input stream
-         * @param dos write particular data type on output stream
+         * @param TAG tag name
+         * @param socket device socket
+         * @param handler to established a communication between background thread and UI thread
+         * @param dis DataInputStream object for receive custom data types from socket
+         * @param bis BufferedInputStream for receive the bytes from socket
          * */
         private static final String TAG = "o2o_data_io";
         private Socket socket;
         private Handler handler;
 
         private DataInputStream dis;
-        private DataOutputStream dos;
-
-        private BufferedOutputStream bos;
         private BufferedInputStream bis;
 
-        public DataIO(Handler handler){
-            this.handler = handler;
-
-            this.setName(TAG);
-        }
-
-        public void setSocket(Socket socket){
+        public Receiver(Socket socket, Handler handler){
             this.socket = socket;
-
-            this.start();
+            this.handler = handler;
         }
 
         /**
          * Thread will live til the socket alive.
          *
+         * <h3>Reading Flow</h3>
          * <ol>
          *     <li>File Name</li>
          *     <li>File Size</li>
@@ -170,10 +157,8 @@ class O2O {
 
                 // set Data I/O streams
                 dis = new DataInputStream(socket.getInputStream());
-                dos = new DataOutputStream(socket.getOutputStream());
 
                 // set the buffered I/O streams
-                bos = new BufferedOutputStream(dos);
                 bis = new BufferedInputStream(dis);
 
                 // store the file name
@@ -240,17 +225,38 @@ class O2O {
                 Log.e(TAG, ex.getMessage());
             }
         }
+    }
+
+    static class Sender implements Runnable{
 
         /**
-         * send method used to transfer file using DataIO background thread.
-         * data output stream first sent the file nama and file size.
-         * The write the file on buffed output stream 64kb per time.
+         * Sender class is a runnable implemented class designed for send a file through
+         * a socket in background.
          *
-         * @param file explored file for sent.
+         * @param TAG tag name
+         * @param socket connected device socket
+         * @param handler to established a communication between background thread and UI thread
+         * @param file file to be sent
          * */
-        public void send(File file){
+        private static final String TAG = "o2o_sender";
 
+        private Socket socket;
+        private Handler handler;
+        private File file;
+
+        public Sender(Socket socket, Handler handler, File file){
+            this.socket = socket;
+            this.handler = handler;
+            this.file = file;
+        }
+
+        @Override
+        public void run(){
             try {
+
+                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+
                 // sent the file name
                 dos.writeUTF(file.getName());
                 // sent the file sizes
@@ -279,6 +285,7 @@ class O2O {
 
                 Log.d(TAG, "file sent");
 
+                handler.obtainMessage(MESSAGE_FILE_SENT).sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
             }
