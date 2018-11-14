@@ -31,13 +31,27 @@
             android:hint="File Name"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
-        <ProgressBar
-            android:id="@+id/row_o2o_file_progress_status"
-            android:padding="2dp"
-            android:layout_marginLeft="5dp"
+        <LinearLayout
+            android:weightSum="10"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/row_o2o_io_type"
+                android:src="@drawable/ic_file_download"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+            <ProgressBar
+                android:id="@+id/row_o2o_file_progress_status"
+                android:padding="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="9"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -1,10 +1,16 @@
 package sakkhat.com.p250.accessories;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +36,8 @@ import sakkhat.com.p250.services.NightLightService;
 public class FragmentAccessories extends Fragment{
 
     public static final String TAG = "fragment_accessories";// class tag
+    private static final int ALERT_WINDOW_PERMISSOIN = 973;
+
     private View root;// root view by layout inflate
     private Context context;// context of this fragment
     private FragmentListener fragmentListener; // fragment listener for communication with base activity
@@ -109,16 +117,17 @@ public class FragmentAccessories extends Fragment{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    Memory.save(context,NightLightService.SWITCH_KEY,true);// save switched on status
-                    nightLightBar.setActivated(true);// actiaved the seek bar to perform
-                    if(Memory.retrieveInt(context,NightLightService.LIGHT_KEY) == Memory.DEFAUL_INT){
-                        // no night light value set
-                        Memory.save(context,NightLightService.LIGHT_KEY,50);
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        // request for permission
+                        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
+                                != PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(getActivity(),new String[]
+                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},ALERT_WINDOW_PERMISSOIN);
+                        }
                     }
-                    int progressed = Memory.retrieveInt(context,NightLightService.LIGHT_KEY);// fetch progressed value
-                    nightLightBar.setProgress(progressed); // update in seek bar
-                    context.startService(new Intent(context, NightLightService.class));//start service
-                    Log.d(TAG, "night mode activated");
+                    else{
+                        nightLight();
+                    }
                 }
                 else{
                     Memory.save(context,NightLightService.SWITCH_KEY,false);// save the switched off status
@@ -131,6 +140,27 @@ public class FragmentAccessories extends Fragment{
         //------------------------------------------------------------------------------------------------
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == ALERT_WINDOW_PERMISSOIN){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                nightLight();
+            }
+        }
+    }
+
+    private void nightLight(){
+        Memory.save(context,NightLightService.SWITCH_KEY,true);// save switched on status
+        nightLightBar.setActivated(true);// actiaved the seek bar to perform
+        if(Memory.retrieveInt(context,NightLightService.LIGHT_KEY) == Memory.DEFAUL_INT){
+            // no night light value set
+            Memory.save(context,NightLightService.LIGHT_KEY,50);
+        }
+        int progressed = Memory.retrieveInt(context,NightLightService.LIGHT_KEY);// fetch progressed value
+        nightLightBar.setProgress(progressed); // update in seek bar
+        context.startService(new Intent(context, NightLightService.class));//start service
+        Log.d(TAG, "night mode activated");
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == getActivity().RESULT_OK){

@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,8 +34,10 @@ import java.util.concurrent.Executors;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import sakkhat.com.p250.R;
+import sakkhat.com.p250.adapter.FileIOListAdapter;
 import sakkhat.com.p250.broadcaster.WiFiStateReceiver;
 import sakkhat.com.p250.helper.FileUtil;
+import sakkhat.com.p250.structure.DataItem;
 
 public class OneToOne extends AppCompatActivity
         implements View.OnClickListener,WifiP2pManager.PeerListListener,WifiP2pManager.ConnectionInfoListener,
@@ -58,7 +59,6 @@ public class OneToOne extends AppCompatActivity
     /*
     * WiFi P2P stuffs
     * */
-    private WifiManager wifiManager;
     private WifiP2pManager p2pManager;
     private WifiP2pManager.Channel p2pChannel;
     private IntentFilter intentFilter;
@@ -76,7 +76,9 @@ public class OneToOne extends AppCompatActivity
     private ExecutorService execService; // socket reading and writing thread service
     private volatile Socket socket;
 
+    private ArrayList<DataItem> operationList;
     private Queue<File> fileQueue;
+    private FileIOListAdapter ioListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +124,6 @@ public class OneToOne extends AppCompatActivity
         //------------------------------------------------------------------------------------
 
         //----------------------------------- WiFi P2P functionality ----------------------------
-        wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         p2pManager = (WifiP2pManager) getSystemService(WIFI_P2P_SERVICE);
         p2pChannel = p2pManager.initialize(this, getMainLooper(), null);
 
@@ -148,8 +149,12 @@ public class OneToOne extends AppCompatActivity
         availableDeviceListView.setAdapter(arrayAdapter);
         //---------------------------------------------------------------------------------------------------
 
-        // file queue
+        // file queue and history
         fileQueue = new LinkedList<>();
+        operationList = new ArrayList<>();
+        ioListAdapter = new FileIOListAdapter(this,R.layout.row_file_io_o2o,operationList);
+        fileIOHistoryListView.setAdapter(ioListAdapter);
+
     }
 
     /**
@@ -371,13 +376,24 @@ public class OneToOne extends AppCompatActivity
             else if(msg.what == O2O.MESSAGE_IO_ERROR){
                 // handle the error
             }
+            else if(msg.what == O2O.MESSAGE_FILE_KNOCK){
+                String[] data = (String[]) msg.obj;
+                String name = data[0];
+                Long size = Long.parseLong(data[1]);
+
+                operationList.add(0, new DataItem(name, size, true));
+                // unable all stuffs
+
+            }
             return false;
         }
     });
 
     private void sendQueuedFiles(){
         if(!connected) return;
-        execService.execute(new O2O.Sender(socket, handler, fileQueue.peek()));
+        File file = fileQueue.peek();
+        operationList.add(0,new DataItem(file.getName(),file.length(), false));
+        execService.execute(new O2O.Sender(socket, handler,file));
         fileQueue.remove();
     }
 }

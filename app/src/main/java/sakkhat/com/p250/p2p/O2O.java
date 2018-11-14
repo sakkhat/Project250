@@ -1,6 +1,7 @@
 
 package sakkhat.com.p250.p2p;
 
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -43,10 +44,12 @@ class O2O {
      * @param PATH default directory to store the files.
      * */
     private static final int PORT = 31000;
+    public static final int MESSAGE_FILE_KNOCK = -1919190;
     public static final int MESSAGE_FILE_RECEIVED = -1919191;
-    public static final int MESSAGE_FILE_SENT = -1919190;
-    public static final int MESSAGE_SOCKET_CONNECTED = -1919189;
-    public static final int MESSAGE_IO_ERROR = -19191988;
+    public static final int MESSAGE_FILE_SENT = -1919192;
+    public static final int MESSAGE_SOCKET_CONNECTED = -1919193;
+    public static final int MESSAGE_IO_ERROR = -1919194;
+    public static final int MESSAGE_PROGRESS = -1919195;
 
     public static final String PATH = Environment.getExternalStoragePublicDirectory(Environment
             .DIRECTORY_DOCUMENTS).getPath();
@@ -195,6 +198,10 @@ class O2O {
                         FileOutputStream fos = new FileOutputStream(file);
                         // initialize the received byte size
                         received = 0;
+
+                        handler.obtainMessage(MESSAGE_FILE_KNOCK, new String[] {
+                                fileName, Long.toString(fileSize)
+                        }).sendToTarget();
 
                         // continue to read the file byte data til the last one
                         while ((len = bis.read(kb_64)) > 0){
