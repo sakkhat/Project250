@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,9 @@ import com.google.gson.JsonElement;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 
 import ai.api.AIListener;
 import ai.api.android.AIConfiguration;
@@ -50,6 +53,7 @@ public class FragmentJarvis extends Fragment
 
     private AIService aiService;
     private FragmentListener fragmentListener;
+    private TextToSpeech tts;
 
     private Button button;
     private TextView textResult;
@@ -89,6 +93,14 @@ public class FragmentJarvis extends Fragment
         textResult=(TextView)root.findViewById(R.id.frag_jarvis_result);
         textResult.setText("Result");
 
+
+        tts=new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                tts.setLanguage(Locale.US);
+            }
+        });
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,22 +137,30 @@ public class FragmentJarvis extends Fragment
                 parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
             }
         }
-        app=app.substring(1,app.length()-1);
-        List<PackageInfo>pack=getActivity().getPackageManager().getInstalledPackages(0);
-        for(PackageInfo p : pack)
+        textResult.setText(result.getAction()+" rest : "+result.getResolvedQuery()+" : "+result.getFulfillment().getSpeech());
+
+        if(result.getAction().equals("app_switch"))
         {
-             String app_name=p.applicationInfo.loadLabel(getActivity().getPackageManager()).toString();
-             String pkg=p.packageName;
-             Toast.makeText(getActivity(),app_name+" "+pkg,Toast.LENGTH_SHORT).show();
-             if(app_name.compareToIgnoreCase(app)==0)
-             {
-                 Intent intent=new Intent();
-                 intent.setPackage(pkg);
-                 startActivity(intent);
-                 break;
-             }
+            app=app.substring(1,app.length()-1);
+            List<PackageInfo>pack=getActivity().getPackageManager().getInstalledPackages(0);
+            for(PackageInfo p : pack)
+            {
+                String app_name=p.applicationInfo.loadLabel(getActivity().getPackageManager()).toString();
+                String pkg=p.packageName;
+                Toast.makeText(getActivity(),app_name+" "+pkg,Toast.LENGTH_SHORT).show();
+                if(app_name.compareToIgnoreCase(app)==0)
+                {
+                    Intent intent=new Intent();
+                    intent.setPackage(pkg);
+                    startActivity(intent);
+                    break;
+                }
+            }
         }
-        textResult.setText(app+" rest : "+result.getResolvedQuery()+" : "+result.getFulfillment().getSpeech());
+        else if(result.getAction().equals("joke"))
+        {
+            tts.speak(result.getFulfillment().getSpeech(),TextToSpeech.QUEUE_FLUSH,null);
+        }
 
     }
 
@@ -168,5 +188,13 @@ public class FragmentJarvis extends Fragment
     public void onListeningFinished() {
     }
 
-
+    @Override
+    public void onPause() {
+        if(tts!=null)
+        {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onPause();
+    }
 }
