@@ -78,7 +78,7 @@ public class FragmentJarvis extends Fragment
 
 
         if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},101);
+             ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},101);
 
         final AIConfiguration config=new AIConfiguration(TOKEN,
                 AIConfiguration.SupportedLanguages.English,AIConfiguration.RecognitionEngine.System);
@@ -117,12 +117,30 @@ public class FragmentJarvis extends Fragment
         Result result = result1.getResult();
 
         String parameterString = "";
+        String app="";
         if (result.getParameters() != null && !result.getParameters().isEmpty()) {
             for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
+                if(entry.getKey().contains("app_name"))
+                    app=entry.getValue().toString();
                 parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
             }
         }
-        textResult.setText(result.getResolvedQuery()+" : "+result.getFulfillment().getSpeech());
+        app=app.substring(1,app.length()-1);
+        List<PackageInfo>pack=getActivity().getPackageManager().getInstalledPackages(0);
+        for(PackageInfo p : pack)
+        {
+             String app_name=p.applicationInfo.loadLabel(getActivity().getPackageManager()).toString();
+             String pkg=p.packageName;
+             Toast.makeText(getActivity(),app_name+" "+pkg,Toast.LENGTH_SHORT).show();
+             if(app_name.compareToIgnoreCase(app)==0)
+             {
+                 Intent intent=new Intent();
+                 intent.setPackage(pkg);
+                 startActivity(intent);
+                 break;
+             }
+        }
+        textResult.setText(app+" rest : "+result.getResolvedQuery()+" : "+result.getFulfillment().getSpeech());
 
     }
 

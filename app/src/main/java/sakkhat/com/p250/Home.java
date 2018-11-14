@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +34,6 @@ public class Home extends AppCompatActivity
 
     public FragmentManager fragmentManager;
     public FrameLayout homeFrame;
-    public HashMap<String,String>installedapp;
     private List<MenuItem> menuItems;
     private CursorWheelLayout menuLayout;
     private MenuWheelAdapter menuAdapter;
@@ -43,21 +43,9 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        //listingApp();
         initHome();
     }
 
-    public  void listingApp()
-    {
-        List<PackageInfo>pack=getPackageManager().getInstalledPackages(0);
-        for(PackageInfo p:pack)
-        {
-            String app=p.applicationInfo.loadLabel(getPackageManager()).toString();
-            String pack_name=p.packageName;
-            installedapp.put(app,pack_name);
-        }
-
-    }
 
     private void initHome(){
         /*
@@ -92,7 +80,6 @@ public class Home extends AppCompatActivity
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(homeFrame.getId(),new FragmentAccessories());
         transaction.commit();
-
     }
 
     @Override
