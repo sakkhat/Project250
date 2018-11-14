@@ -112,6 +112,9 @@ public class NightLightService extends Service {
                 PixelFormat.TRANSLUCENT);
         params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;// flag layout in screen
 
+        /**
+         * @debug  android 6 doesn't give any permission to add this window
+         * */
         windowManager.addView(screenFilter, params);// set filter view on screen
         windowManager.addView(screenAlpha, params);// set alpha view on screen
         //--------------------------------------------------------------------------------------
