@@ -7,7 +7,7 @@
     android:padding="5dp"
     tools:context="sakkhat.com.p250.jarvis.FragmentJarvis">
 
-    <ImageView
+    <Button
         android:id="@+id/frag_jarvis_icon"
         android:src="@drawable/ic_jarvis"
         android:layout_centerVertical="true"

@@ -1,6 +1,8 @@
 package sakkhat.com.p250;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import github.hellocsl.cursorwheel.CursorWheelLayout;
@@ -30,7 +33,7 @@ public class Home extends AppCompatActivity
 
     public FragmentManager fragmentManager;
     public FrameLayout homeFrame;
-
+    public HashMap<String,String>installedapp;
     private List<MenuItem> menuItems;
     private CursorWheelLayout menuLayout;
     private MenuWheelAdapter menuAdapter;
@@ -40,8 +43,20 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        //listingApp();
         initHome();
+    }
+
+    public  void listingApp()
+    {
+        List<PackageInfo>pack=getPackageManager().getInstalledPackages(0);
+        for(PackageInfo p:pack)
+        {
+            String app=p.applicationInfo.loadLabel(getPackageManager()).toString();
+            String pack_name=p.packageName;
+            installedapp.put(app,pack_name);
+        }
+
     }
 
     private void initHome(){
