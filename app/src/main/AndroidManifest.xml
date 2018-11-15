@@ -31,7 +31,7 @@
             android:name=".services.NightLightService"
             android:exported="false" />
         <service
-            android:name=".services.FloatingWidget"
+            android:name=".services.ScreenAssistant"
             android:enabled="true"
             android:stopWithTask="false" />
 

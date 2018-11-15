@@ -15,28 +15,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.ServiceUpater;
-import sakkhat.com.p250.helper.FileUtil;
 import sakkhat.com.p250.helper.FragmentListener;
 import sakkhat.com.p250.helper.Memory;
+import sakkhat.com.p250.services.ScreenAssistant;
 import sakkhat.com.p250.services.NightLightService;
 
 public class FragmentAccessories extends Fragment{
 
     public static final String TAG = "fragment_accessories";// class tag
-    private static final int ALERT_WINDOW_PERMISSOIN = 973;
+    private static final int NIGHT_MODE_PERMISSION = 973;
+    private static final int SCREEN_ASSIST_PERMISSION = 375;
 
     private View root;// root view by layout inflate
     private Context context;// context of this fragment
@@ -45,7 +40,8 @@ public class FragmentAccessories extends Fragment{
     private SeekBar nightLightBar;
     private Switch nightLightSwitch;
 
-    private Button btTest;
+    private Switch screenAssistSwitch;
+
 
     @Nullable
     @Override
@@ -54,15 +50,8 @@ public class FragmentAccessories extends Fragment{
         context = getContext();
         init(); // initialization of other stuffs
 
-        btTest = (Button)root.findViewById(R.id.bt_test);
-        btTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.setType("*/*");
-                startActivityForResult(i, 2);
-            }
-        });
+
+
         return root;
     }
 
@@ -122,7 +111,7 @@ public class FragmentAccessories extends Fragment{
                         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
                                 != PackageManager.PERMISSION_GRANTED){
                             ActivityCompat.requestPermissions(getActivity(),new String[]
-                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},ALERT_WINDOW_PERMISSOIN);
+                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},NIGHT_MODE_PERMISSION);
                         }
                     }
                     else{
@@ -138,13 +127,48 @@ public class FragmentAccessories extends Fragment{
             }
         });
         //------------------------------------------------------------------------------------------------
+
+
+        //----------------------------------- Screen Assistant Switch ------------------------------------------------
+        screenAssistSwitch = root.findViewById(R.id.frag_access_screen_assist_switch);
+        screenAssistSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        // request for permission
+                        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
+                                != PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(getActivity(),new String[]
+                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},SCREEN_ASSIST_PERMISSION);
+                        }
+                    }
+                    else{
+                        context.startService(new Intent(context, ScreenAssistant.class));
+                        Memory.save(context, ScreenAssistant.TAG, true);
+                    }
+                }
+                else{
+                    context.stopService(new Intent(context, ScreenAssistant.class));
+                    Memory.save(context, ScreenAssistant.TAG, false);
+                }
+            }
+        });
+        screenAssistSwitch.setChecked(Memory.retrieveBool(context, ScreenAssistant.TAG));
+        //------------------------------------------------------------------------------------------------------------
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == ALERT_WINDOW_PERMISSOIN){
+        if(requestCode == NIGHT_MODE_PERMISSION){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 nightLight();
+            }
+        }
+        else if(requestCode == SCREEN_ASSIST_PERMISSION){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                context.startService(new Intent(context, ScreenAssistant.class));
+                Memory.save(context, ScreenAssistant.TAG, true);
             }
         }
     }
@@ -161,29 +185,5 @@ public class FragmentAccessories extends Fragment{
         context.startService(new Intent(context, NightLightService.class));//start service
         Log.d(TAG, "night mode activated");
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == getActivity().RESULT_OK){
-            if(requestCode == 2){
-                Log.e(TAG, data.getData().toString());
-                String s = FileUtil.getPath(context, data.getData());
-                if(s != null){
-                    File f = new File(s);
-                    Log.w(TAG, f.getName());
-                    Log.w(TAG, Long.toString(f.length()));
-
-                    try {
-                        FileInputStream fis = new FileInputStream(s);
-                        fis.close();
-                    } catch (FileNotFoundException e) {
-                        Log.e(TAG, e.toString());
-                    } catch (IOException e) {
-                        Log.e(TAG, e.toString());
-                    }
-
-                }
-
-            }
-        }
-    }
+    
 }

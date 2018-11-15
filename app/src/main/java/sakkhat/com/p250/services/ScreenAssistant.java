@@ -3,19 +3,16 @@ package sakkhat.com.p250.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-
-import java.util.Random;
 
 import sakkhat.com.p250.R;
 
@@ -23,18 +20,15 @@ import sakkhat.com.p250.R;
  * Created by hp on 05-Oct-18.
  */
 
-public class FloatingWidget extends Service {
+public class ScreenAssistant extends Service {
     public static final String TAG = "floating_service";
 
     private WindowManager wManager;
     private WindowManager.LayoutParams params;
     private View floatingView;
 
-    private Random rand;
-    public FloatingWidget(){
-
-        rand = new Random();
-
+    private GestureDetector detector;
+    public ScreenAssistant(){
         Log.d(TAG, "constructor called");
     }
 
@@ -55,6 +49,7 @@ public class FloatingWidget extends Service {
         super.onCreate();
 
         Log.d(TAG,"on Create called");
+        detector = new GestureDetector(getApplicationContext(), new Detector());
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         floatingView = inflater.inflate(R.layout.floating_widget, null, false);
@@ -65,18 +60,8 @@ public class FloatingWidget extends Service {
 
         wManager.addView(floatingView,params);
 
-        floatingView.findViewById(R.id.flow_widget).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent intent = new Intent("ServiceStopper");
-                intent.putExtra("tag",TAG);
-                sendBroadcast(intent);
-                Log.d(TAG,"long pressed on widget");
-                return true;
-            }
-        });
-
         floatingView.findViewById(R.id.flow_widget).setLongClickable(true);
+
 
         floatingView.findViewById(R.id.flow_widget).setOnTouchListener(new View.OnTouchListener() {
             private float touchX;
@@ -86,39 +71,7 @@ public class FloatingWidget extends Service {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:{
-                        x = params.x;
-                        y = params.y;
-                        touchX = event.getRawX();
-                        touchY = event.getRawY();
-
-                        Log.d(TAG,"widget touch request");
-
-                        return false;
-                    }
-
-                    case MotionEvent.ACTION_MOVE:{
-                        params.x = x-(int)(touchX-event.getRawX());
-                        params.y = y-(int)(touchY-event.getRawY());
-                        wManager.updateViewLayout(floatingView,params);
-
-                        return true;
-                    }
-                    case MotionEvent.ACTION_UP:{
-                        if(touchX == event.getRawX() && touchY == event.getRawY()){
-                            // on touch triggered
-                            int r = rand.nextInt(255);
-                            int g = rand.nextInt(255);
-                            int b = rand.nextInt(255);
-                            floatingView.setBackgroundColor(Color.rgb(r,g,b));
-
-                            return false;
-                        }
-                        Log.d(TAG,"widget touch released");
-                    }
-                }
-                return false;
+                return detector.onTouchEvent(event);
             }
         });
     }
@@ -130,5 +83,55 @@ public class FloatingWidget extends Service {
         wManager.removeView(floatingView);
         stopForeground(true);
         stopSelf();
+    }
+
+
+    private class Detector extends GestureDetector.SimpleOnGestureListener{
+
+        private int x;
+        private int y;
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            x = params.x;
+            y = params.y;
+
+            Log.d(TAG, "onDown called");
+            return true;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.d(TAG, "on single tap called");
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+
+            params.x = x - (int)(e1.getRawX()-e2.getRawX());
+            params.y = y - (int)(e1.getRawY()-e2.getRawY());
+
+            wManager.updateViewLayout(floatingView,params);
+
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            Log.d(TAG, "on Long Press");
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+            Log.d(TAG, "On Fling called");
+            return false;
+        }
     }
 }
