@@ -1,6 +1,8 @@
 package sakkhat.com.p250;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -9,8 +11,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import github.hellocsl.cursorwheel.CursorWheelLayout;
@@ -30,7 +34,6 @@ public class Home extends AppCompatActivity
 
     public FragmentManager fragmentManager;
     public FrameLayout homeFrame;
-
     private List<MenuItem> menuItems;
     private CursorWheelLayout menuLayout;
     private MenuWheelAdapter menuAdapter;
@@ -40,9 +43,9 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         initHome();
     }
+
 
     private void initHome(){
         /*
@@ -77,7 +80,6 @@ public class Home extends AppCompatActivity
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(homeFrame.getId(),new FragmentAccessories());
         transaction.commit();
-
     }
 
     @Override
