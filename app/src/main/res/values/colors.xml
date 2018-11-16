@@ -8,4 +8,5 @@
     <color name="mateBlack">#141414</color>
     <color name="darkGreen">#128650</color>
     <color name="nightFilter">#5e3f4000</color>
+    <color name="lightGray">#e9e1e0e0</color>
 </resources>

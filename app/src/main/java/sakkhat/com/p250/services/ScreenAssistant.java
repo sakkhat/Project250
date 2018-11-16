@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import sakkhat.com.p250.R;
+import sakkhat.com.p250.helper.Memory;
 
 /**
  * Created by hp on 05-Oct-18.
@@ -26,8 +28,11 @@ public class ScreenAssistant extends Service {
     private WindowManager wManager;
     private WindowManager.LayoutParams params;
     private View floatingView;
-
     private GestureDetector detector;
+    private View popView;
+
+    private CardView btNight, btSwitch, btBase, btEmergency, btMinimize;
+
     public ScreenAssistant(){
         Log.d(TAG, "constructor called");
     }
@@ -41,6 +46,9 @@ public class ScreenAssistant extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent != null){
+
+        }
         return START_STICKY;
     }
 
@@ -58,22 +66,80 @@ public class ScreenAssistant extends Service {
                 PixelFormat.TRANSLUCENT);
         wManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
-        wManager.addView(floatingView,params);
-
         floatingView.findViewById(R.id.flow_widget).setLongClickable(true);
 
 
         floatingView.findViewById(R.id.flow_widget).setOnTouchListener(new View.OnTouchListener() {
-            private float touchX;
-            private float touchY;
-            private int x = params.x;
-            private int y = params.y;
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return detector.onTouchEvent(event);
             }
         });
+        floatingView.setFocusable(true);
+
+
+        initPopWindowView(inflater);
+
+        wManager.addView(floatingView,params);
+        wManager.addView(popView, params);
+
+    }
+
+
+    private void initPopWindowView(LayoutInflater inflater){
+        popView = inflater.inflate(R.layout.assist_pop_window, null, false);
+
+        btBase = popView.findViewById(R.id.assist_pop_base);
+        btBase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+        btEmergency = popView.findViewById(R.id.assist_pop_emergency);
+        btEmergency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+        btMinimize = popView.findViewById(R.id.assist_pop_minimize);
+        btMinimize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popView.setEnabled(false);
+                popView.setVisibility(View.GONE);
+
+                floatingView.setVisibility(View.VISIBLE);
+                floatingView.setEnabled(true);
+
+                wManager.updateViewLayout(floatingView, params);
+            }
+        });
+
+
+        btNight = popView.findViewById(R.id.assist_pop_night);
+        btNight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btSwitch = popView.findViewById(R.id.assist_pop_switch);
+        btSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        popView.setEnabled(false);
+        popView.setVisibility(View.GONE);
     }
 
     @Override
@@ -81,6 +147,7 @@ public class ScreenAssistant extends Service {
         super.onDestroy();
         Log.d(TAG,"on destroy called");
         wManager.removeView(floatingView);
+        wManager.removeView(popView);
         stopForeground(true);
         stopSelf();
     }
@@ -102,11 +169,18 @@ public class ScreenAssistant extends Service {
 
         @Override
         public void onShowPress(MotionEvent e) {
-
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+
+            floatingView.setEnabled(false);
+            floatingView.setVisibility(View.GONE);
+
+            popView.setEnabled(true);
+            popView.setVisibility(View.VISIBLE);
+
+            wManager.updateViewLayout(popView,params);
             Log.d(TAG, "on single tap called");
             return true;
         }
