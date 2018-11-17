@@ -39,7 +39,6 @@ public class FragmentAccessories extends Fragment{
 
     private SeekBar nightLightBar;
     private Switch nightLightSwitch;
-
     private Switch screenAssistSwitch;
 
 
@@ -144,7 +143,17 @@ public class FragmentAccessories extends Fragment{
                         }
                     }
                     else{
-                        context.startService(new Intent(context, ScreenAssistant.class));
+                        Intent i = new Intent(context, ScreenAssistant.class);
+                        i.setAction(TAG);
+                        boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
+                        i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
+                        if(isNightOn){
+                            i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
+                        }
+                        else{
+                            i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
+                        }
+                        context.startService(i);
                         Memory.save(context, ScreenAssistant.TAG, true);
                     }
                 }
@@ -167,7 +176,17 @@ public class FragmentAccessories extends Fragment{
         }
         else if(requestCode == SCREEN_ASSIST_PERMISSION){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                context.startService(new Intent(context, ScreenAssistant.class));
+                Intent i = new Intent(context, ScreenAssistant.class);
+                i.setAction(TAG);
+                boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
+                i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
+                if(isNightOn){
+                    i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
+                }
+                else{
+                    i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
+                }
+                context.startService(i);
                 Memory.save(context, ScreenAssistant.TAG, true);
             }
         }

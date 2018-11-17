@@ -3,6 +3,8 @@ package sakkhat.com.p250.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -16,7 +18,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import sakkhat.com.p250.R;
-import sakkhat.com.p250.helper.Memory;
+import sakkhat.com.p250.broadcaster.ServiceSwitcher;
+import sakkhat.com.p250.accessories.FragmentAccessories;
 
 /**
  * Created by hp on 05-Oct-18.
@@ -25,13 +28,21 @@ import sakkhat.com.p250.helper.Memory;
 public class ScreenAssistant extends Service {
     public static final String TAG = "floating_service";
 
+    public static final String ACTION_NIGHT_ON = "s_a_n_off";
+    public static final String ACTION_NIGHT_OFF = "s_a_n_on";
+    public static final String ACTION_ASSIST_OFF = "s_a_off";
+
     private WindowManager wManager;
     private WindowManager.LayoutParams params;
     private View floatingView;
     private GestureDetector detector;
     private View popView;
 
+    private ServiceSwitcher switcherBroadcaster;
+    private IntentFilter intentFilter;
+
     private CardView btNight, btSwitch, btBase, btEmergency, btMinimize;
+    private boolean isNightOn;
 
     public ScreenAssistant(){
         Log.d(TAG, "constructor called");
@@ -47,7 +58,27 @@ public class ScreenAssistant extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent != null){
+            if(intent.getExtras() == null){
+                return START_STICKY;
+            }
+            switch (intent.getAction()){
+                case FragmentAccessories.TAG:{
+                    isNightOn = intent.getBooleanExtra(NightLightService.SWITCH_KEY,false);
+                    if(isNightOn){
+                        btNight.setCardBackgroundColor(intent.getIntExtra(ACTION_NIGHT_ON, Color.parseColor("#000000")));
+                    }
+                    else{
+                        btNight.setCardBackgroundColor(intent.getIntExtra(ACTION_NIGHT_OFF, Color.parseColor("#000000")));
+                    }
 
+                } break;
+                case ACTION_NIGHT_OFF:{
+                    btNight.setCardBackgroundColor(intent.getIntExtra(ACTION_NIGHT_OFF, Color.parseColor("#000000")));
+                } break;
+                case ACTION_NIGHT_ON:{
+                    btNight.setCardBackgroundColor(intent.getIntExtra(ACTION_NIGHT_ON, Color.parseColor("#000000")));
+                } break;
+            }
         }
         return START_STICKY;
     }
@@ -55,11 +86,21 @@ public class ScreenAssistant extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         Log.d(TAG,"on Create called");
-        detector = new GestureDetector(getApplicationContext(), new Detector());
 
+        detector = new GestureDetector(getApplicationContext(), new Detector());
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        initFloatingView(inflater);
+        initPopWindowView(inflater);
+
+        wManager.addView(floatingView,params);
+        wManager.addView(popView, params);
+
+        initBroadcaster();
+    }
+
+    private void initFloatingView(LayoutInflater inflater){
         floatingView = inflater.inflate(R.layout.floating_widget, null, false);
         params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
@@ -76,16 +117,7 @@ public class ScreenAssistant extends Service {
             }
         });
         floatingView.setFocusable(true);
-
-
-        initPopWindowView(inflater);
-
-        wManager.addView(floatingView,params);
-        wManager.addView(popView, params);
-
     }
-
-
     private void initPopWindowView(LayoutInflater inflater){
         popView = inflater.inflate(R.layout.assist_pop_window, null, false);
 
@@ -126,6 +158,17 @@ public class ScreenAssistant extends Service {
         btNight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), ServiceSwitcher.class);
+                if(isNightOn){
+                    i.setAction(ACTION_NIGHT_OFF);
+                    sendBroadcast(i);
+                    isNightOn = false;
+                }
+                else{
+                    i.setAction(ACTION_NIGHT_ON);
+                    sendBroadcast(i);
+                    isNightOn = true;
+                }
 
             }
         });
@@ -134,7 +177,9 @@ public class ScreenAssistant extends Service {
         btSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(getApplicationContext(), ServiceSwitcher.class);
+                i.setAction(ACTION_ASSIST_OFF);
+                sendBroadcast(i);
             }
         });
 
@@ -142,12 +187,24 @@ public class ScreenAssistant extends Service {
         popView.setVisibility(View.GONE);
     }
 
+
+    private void initBroadcaster(){
+        switcherBroadcaster = new ServiceSwitcher();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_ASSIST_OFF);
+        intentFilter.addAction(ACTION_NIGHT_OFF);
+        intentFilter.addAction(ACTION_NIGHT_ON);
+
+        registerReceiver(switcherBroadcaster, intentFilter);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"on destroy called");
         wManager.removeView(floatingView);
         wManager.removeView(popView);
+        unregisterReceiver(switcherBroadcaster);
+
         stopForeground(true);
         stopSelf();
     }

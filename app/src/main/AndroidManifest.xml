@@ -36,7 +36,7 @@
             android:stopWithTask="false" />
 
         <receiver
-            android:name=".broadcaster.ServiceStopper"
+            android:name=".broadcaster.ServiceSwitcher"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
