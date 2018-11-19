@@ -1,25 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_fragment_jarvis"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp"
     tools:context="sakkhat.com.p250.jarvis.FragmentJarvis">
 
-    <Button
+    <ImageView
         android:id="@+id/frag_jarvis_icon"
+        android:layout_margin="10dp"
         android:src="@drawable/ic_jarvis"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_width="60dp"
-        android:layout_height="60dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/frag_jarvis_speaker"
+        android:src="@drawable/ic_speaker_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/frag_jarvis_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+
     <TextView
         android:id="@+id/frag_jarvis_result"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:paddingTop="10dp"
+        android:layout_marginTop="25dp"
+        android:layout_below="@id/frag_jarvis_speaker"
+        android:textColor="@color/white"
         android:textSize="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="250dp" />
+
+    <ImageView
+        android:id="@+id/frag_jarvis_voice_input"
+        android:src="@drawable/ic_microphone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
+
+    <EditText
+        android:id="@+id/frag_jarvis_text_input"
+        android:imeActionLabel="Ask"
+        android:imeOptions="actionSend"
+        android:textAlignment="center"
+        android:background="@drawable/round_rect_white"
+        android:textSize="15dp"
+        android:hint="Tell me a joke"
+        android:padding="5dp"
+        android:textColor="@color/jarvis"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_toLeftOf="@id/frag_jarvis_voice_input"
+        android:layout_marginRight="10dp"
+        android:layout_height="40dp" />
+
+
 
 </RelativeLayout>
