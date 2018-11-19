@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -39,8 +40,8 @@ public class FragmentAccessories extends Fragment{
 
     private SeekBar nightLightBar;
     private Switch nightLightSwitch;
-
     private Switch screenAssistSwitch;
+
 
 
     @Nullable
@@ -48,10 +49,7 @@ public class FragmentAccessories extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_accessories,null,false);
         context = getContext();
-        init(); // initialization of other stuffs
-
-
-
+        init(); // initialization of other stuffss
         return root;
     }
 
@@ -144,7 +142,17 @@ public class FragmentAccessories extends Fragment{
                         }
                     }
                     else{
-                        context.startService(new Intent(context, ScreenAssistant.class));
+                        Intent i = new Intent(context, ScreenAssistant.class);
+                        i.setAction(TAG);
+                        boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
+                        i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
+                        if(isNightOn){
+                            i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
+                        }
+                        else{
+                            i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
+                        }
+                        context.startService(i);
                         Memory.save(context, ScreenAssistant.TAG, true);
                     }
                 }
@@ -167,7 +175,17 @@ public class FragmentAccessories extends Fragment{
         }
         else if(requestCode == SCREEN_ASSIST_PERMISSION){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                context.startService(new Intent(context, ScreenAssistant.class));
+                Intent i = new Intent(context, ScreenAssistant.class);
+                i.setAction(TAG);
+                boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
+                i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
+                if(isNightOn){
+                    i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
+                }
+                else{
+                    i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
+                }
+                context.startService(i);
                 Memory.save(context, ScreenAssistant.TAG, true);
             }
         }

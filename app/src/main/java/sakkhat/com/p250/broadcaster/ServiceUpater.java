@@ -21,11 +21,13 @@ public class ServiceUpater extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        if(action.equals(NightLightService.ACTION_ON_VALUE_CHANGED)){
-            Intent service = new Intent(context, NightLightService.class);
-            service.putExtra(NightLightService.ACTION_ON_VALUE_CHANGED,true);
-            context.startService(service);
+
+        switch(intent.getAction()){
+            case NightLightService.ACTION_ON_VALUE_CHANGED:{
+                Intent service = new Intent(context, NightLightService.class);
+                service.putExtra(NightLightService.ACTION_ON_VALUE_CHANGED,true);
+                context.startService(service);
+            } break;
         }
     }
 }

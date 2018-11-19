@@ -11,7 +11,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -19,10 +20,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Home">
+        <activity android:name=".Home"
+            android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -36,7 +37,7 @@
             android:stopWithTask="false" />
 
         <receiver
-            android:name=".broadcaster.ServiceStopper"
+            android:name=".broadcaster.ServiceSwitcher"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -46,9 +47,9 @@
         <receiver
             android:name=".broadcaster.ServiceUpater"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
-        <activity android:name=".p2p.OneToOne"></activity>
+        <activity android:name=".p2p.OneToOne" />
     </application>
 
 </manifest>
