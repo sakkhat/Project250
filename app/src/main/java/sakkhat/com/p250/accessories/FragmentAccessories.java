@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -42,15 +43,13 @@ public class FragmentAccessories extends Fragment{
     private Switch screenAssistSwitch;
 
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_accessories,null,false);
         context = getContext();
-        init(); // initialization of other stuffs
-
-
-
+        init(); // initialization of other stuffss
         return root;
     }
 

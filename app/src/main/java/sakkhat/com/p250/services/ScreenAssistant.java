@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -17,6 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import ai.api.android.AIConfiguration;
+import ai.api.model.AIError;
+import ai.api.model.AIResponse;
+import ai.api.ui.AIButton;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.ServiceSwitcher;
 import sakkhat.com.p250.accessories.FragmentAccessories;
@@ -25,12 +32,14 @@ import sakkhat.com.p250.accessories.FragmentAccessories;
  * Created by hp on 05-Oct-18.
  */
 
-public class ScreenAssistant extends Service {
+public class ScreenAssistant extends Service implements AIButton.AIButtonListener{
     public static final String TAG = "floating_service";
+    private static final String TOKEN = "c93846a85d5044d09e0db0efc99108ff";
 
     public static final String ACTION_NIGHT_ON = "s_a_n_off";
     public static final String ACTION_NIGHT_OFF = "s_a_n_on";
     public static final String ACTION_ASSIST_OFF = "s_a_off";
+    public static final String ACTION_JARVIS = "s_a_jarvis";
 
     private WindowManager wManager;
     private WindowManager.LayoutParams params;
@@ -43,6 +52,10 @@ public class ScreenAssistant extends Service {
 
     private CardView btNight, btSwitch, btBase, btEmergency, btMinimize;
     private boolean isNightOn;
+
+
+    // Jarvis
+    private AIButton ai;
 
     public ScreenAssistant(){
         Log.d(TAG, "constructor called");
@@ -98,6 +111,7 @@ public class ScreenAssistant extends Service {
         wManager.addView(popView, params);
 
         initBroadcaster();
+        initAI();
     }
 
     private void initFloatingView(LayoutInflater inflater){
@@ -118,6 +132,7 @@ public class ScreenAssistant extends Service {
         });
         floatingView.setFocusable(true);
     }
+
     private void initPopWindowView(LayoutInflater inflater){
         popView = inflater.inflate(R.layout.assist_pop_window, null, false);
 
@@ -187,7 +202,6 @@ public class ScreenAssistant extends Service {
         popView.setVisibility(View.GONE);
     }
 
-
     private void initBroadcaster(){
         switcherBroadcaster = new ServiceSwitcher();
         intentFilter = new IntentFilter();
@@ -197,6 +211,16 @@ public class ScreenAssistant extends Service {
 
         registerReceiver(switcherBroadcaster, intentFilter);
     }
+
+    private void initAI(){
+        final AIConfiguration config=new AIConfiguration(TOKEN,
+                AIConfiguration.SupportedLanguages.English,AIConfiguration.RecognitionEngine.System);
+
+        ai = new AIButton(getBaseContext());
+        ai.initialize(config);
+        ai.setResultsListener(this);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -208,7 +232,6 @@ public class ScreenAssistant extends Service {
         stopForeground(true);
         stopSelf();
     }
-
 
     private class Detector extends GestureDetector.SimpleOnGestureListener{
 
@@ -255,14 +278,29 @@ public class ScreenAssistant extends Service {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            ai.startListening();
             Log.d(TAG, "on Long Press");
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-            Log.d(TAG, "On Fling called");
             return false;
         }
+    }
+
+
+    @Override
+    public void onResult(AIResponse result) {
+        Log.w(TAG, result.getResult().getFulfillment().getSpeech());
+    }
+
+    @Override
+    public void onError(AIError error) {
+
+    }
+
+    @Override
+    public void onCancelled() {
+
     }
 }

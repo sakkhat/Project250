@@ -47,6 +47,9 @@ public class ServiceSwitcher extends BroadcastReceiver {
                 i.setAction(ScreenAssistant.ACTION_NIGHT_ON);
                 i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
                 context.startService(i);
+            } break;
+
+            case ScreenAssistant.ACTION_JARVIS:{
 
             } break;
         }

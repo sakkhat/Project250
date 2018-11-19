@@ -62,6 +62,9 @@ public class FragmentJarvis extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_jarvis,null, false);
+        // instance of base context;
+        context = getContext();
+
         init();
         return root;
     }
@@ -74,12 +77,6 @@ public class FragmentJarvis extends Fragment
         /*
         * instance and initialize
         * */
-
-        // instance of base context;
-        context = getContext();
-
-
-
 
         if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED)
              ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},101);
