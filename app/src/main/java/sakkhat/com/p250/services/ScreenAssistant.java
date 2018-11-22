@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.os.Build;
 import android.os.IBinder;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -20,13 +18,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import java.util.Locale;
+
 import ai.api.android.AIConfiguration;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
+import ai.api.model.Result;
 import ai.api.ui.AIButton;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.ServiceSwitcher;
 import sakkhat.com.p250.accessories.FragmentAccessories;
+import sakkhat.com.p250.jarvis.Jarvis;
 
 /**
  * Created by hp on 05-Oct-18.
@@ -34,12 +36,10 @@ import sakkhat.com.p250.accessories.FragmentAccessories;
 
 public class ScreenAssistant extends Service implements AIButton.AIButtonListener{
     public static final String TAG = "floating_service";
-    private static final String TOKEN = "c93846a85d5044d09e0db0efc99108ff";
 
     public static final String ACTION_NIGHT_ON = "s_a_n_off";
     public static final String ACTION_NIGHT_OFF = "s_a_n_on";
     public static final String ACTION_ASSIST_OFF = "s_a_off";
-    public static final String ACTION_JARVIS = "s_a_jarvis";
 
     private WindowManager wManager;
     private WindowManager.LayoutParams params;
@@ -56,6 +56,8 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
 
     // Jarvis
     private AIButton ai;
+    private TextToSpeech tts;
+    private Result result;
 
     public ScreenAssistant(){
         Log.d(TAG, "constructor called");
@@ -213,12 +215,19 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
     }
 
     private void initAI(){
-        final AIConfiguration config=new AIConfiguration(TOKEN,
+        final AIConfiguration config=new AIConfiguration(Jarvis.TOKEN,
                 AIConfiguration.SupportedLanguages.English,AIConfiguration.RecognitionEngine.System);
 
         ai = new AIButton(getBaseContext());
         ai.initialize(config);
         ai.setResultsListener(this);
+
+        tts=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+                tts.setLanguage(Locale.US);
+            }
+        });
     }
 
     @Override
@@ -290,8 +299,15 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
 
 
     @Override
-    public void onResult(AIResponse result) {
-        Log.w(TAG, result.getResult().getFulfillment().getSpeech());
+    public void onResult(AIResponse aiResult) {
+        result = aiResult.getResult();
+        switch (result.getAction().trim()){
+            case Jarvis.Actions.JOKE:{
+                // nothing
+            } break;
+            default:Jarvis.query(getApplicationContext(), result);
+        }
+        tts.speak(result.getFulfillment().getSpeech(),TextToSpeech.QUEUE_FLUSH,null);
     }
 
     @Override
