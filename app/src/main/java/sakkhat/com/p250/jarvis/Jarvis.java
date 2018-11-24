@@ -15,6 +15,7 @@ import ai.api.model.Result;
 public class Jarvis {
     public static final String TOKEN = "c93846a85d5044d09e0db0efc99108ff";
     public static final String TAG = "jarvis_base";
+    public static final String JARVIS_SCREEN = "jarvis_screen";
 
     public static class Actions{
         public static final String APP_SWITCHER = "app_switch";
@@ -30,10 +31,15 @@ public class Jarvis {
         public static final String FNF = "fnf";
     }
 
-    public static void query(Context context, Result result){
+    public static void query(Context context, Result result, String callLocation){
         switch (result.getAction().trim()){
             case Jarvis.Actions.APP_SWITCHER:{
-                String appName = result.getStringParameter(Jarvis.Params.APP_NAME, null);
+                switch (result.getStringParameter(Jarvis.Params.APP_NAME).toLowerCase()){
+                    case "browser": swicthToBrowser(context); break;
+                    //case "music": switchToMusicPlayer(context); break;
+                    //case "youtube": switchToYoutube(context, "Search");break;
+                    default:break; // general application opener
+                }
             } break;
 
             case Jarvis.Actions.RING_MODE_CHANGE:{

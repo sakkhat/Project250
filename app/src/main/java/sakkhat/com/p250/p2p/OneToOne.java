@@ -72,8 +72,8 @@ public class OneToOne extends AppCompatActivity
     * Socket, Background Threads, Files
     * */
     private boolean connected;
+    private Thread readerThread;
 
-    private ExecutorService execService; // socket reading and writing thread service
     private volatile Socket socket;
 
     private ArrayList<DataItem> operationList;
@@ -168,7 +168,6 @@ public class OneToOne extends AppCompatActivity
             case R.id.o2o_bt_disconnect:{
                 try {
                     socket.close();
-                    execService.shutdown();
                     p2pManager.cancelConnect(p2pChannel, new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
@@ -266,15 +265,19 @@ public class OneToOne extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if(execService != null){
-            execService.shutdown();
+        try {
+            socket.shutdownInput();
+            socket.shutdownOutput();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     /*
-        * This method will fired up when broadcaster will get an action of WIFI_P2P_PEERS_CHANGED_ACTION.
-        * Then this method will be called with a list available peers.
-        * */
+    * This method will fired up when broadcaster will get an action of WIFI_P2P_PEERS_CHANGED_ACTION.
+    * Then this method will be called with a list available peers.
+    * */
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
         if(peers.getDeviceList().equals(deviceList)){
@@ -300,19 +303,12 @@ public class OneToOne extends AppCompatActivity
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
 
         /**
-         * 2 fixed thread for socket connection established, socket reading and socket writing.
-         * thread-1 : socket established -> socket reading
-         * thread-2 : socket writing
-         * */
-        execService = Executors.newFixedThreadPool(2);
-
-        /**
          * Condition for server device.
          * @param handler pass the handler that instanced in this activity to make possible that
          *                dataIO an external thread can communication with this activity and it's UI.
          * */
         if(info.isGroupOwner && info.groupFormed){
-            execService.execute(new O2O.Server(handler));
+            new Thread(new O2O.Server(handler)).start();
         }
         /**
          * Condition for client device.
@@ -322,7 +318,7 @@ public class OneToOne extends AppCompatActivity
          *                dataIO an external thread can communication with this activity and it's UI.
          * */
         else if(info.groupFormed){
-            execService.execute(new O2O.Client(info.groupOwnerAddress, handler));
+            new Thread(new O2O.Client(info.groupOwnerAddress, handler)).start();
         }
     }
 
@@ -371,7 +367,8 @@ public class OneToOne extends AppCompatActivity
             }
             else if(msg.what == O2O.MESSAGE_SOCKET_CONNECTED){
                 socket = (Socket)msg.obj;
-                execService.execute(new O2O.Receiver(socket,handler));
+                readerThread = new Thread(new O2O.Receiver(socket, handler));
+                readerThread.start();
             }
             else if(msg.what == O2O.MESSAGE_IO_ERROR){
                 // handle the error
@@ -393,7 +390,7 @@ public class OneToOne extends AppCompatActivity
         if(!connected) return;
         File file = fileQueue.peek();
         operationList.add(0,new DataItem(file.getName(),file.length(), false));
-        execService.execute(new O2O.Sender(socket, handler,file));
+        startService(new Intent(this, O2O.SenderService.class));
         fileQueue.remove();
     }
 }

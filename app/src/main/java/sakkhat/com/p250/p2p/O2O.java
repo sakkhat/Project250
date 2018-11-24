@@ -1,7 +1,8 @@
 
 package sakkhat.com.p250.p2p;
 
-import android.os.Bundle;
+import android.app.IntentService;
+import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
@@ -17,8 +18,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Rafiul Islam on 18-Oct-18.
@@ -32,7 +31,7 @@ class O2O {
      * @see Server
      * @see Client
      * @see Receiver
-     * @see Sender
+     * @see SenderService
      *
      * @param PORT socket port from where this socket connection will be established.
      *
@@ -234,10 +233,9 @@ class O2O {
         }
     }
 
-    static class Sender implements Runnable{
-
+    public static class SenderService extends IntentService{
         /**
-         * Sender class is a runnable implemented class designed for send a file through
+         * Sender class is an intent service extended class designed for send a file through
          * a socket in background.
          *
          * @param TAG tag name
@@ -245,20 +243,22 @@ class O2O {
          * @param handler to established a communication between background thread and UI thread
          * @param file file to be sent
          * */
-        private static final String TAG = "o2o_sender";
 
-        private Socket socket;
+        private static final String TAG = "sender_service";
         private Handler handler;
         private File file;
+        private Socket socket;
 
-        public Sender(Socket socket, Handler handler, File file){
+        public SenderService(Socket socket, Handler handler, File file){
+            super(TAG);
+
             this.socket = socket;
             this.handler = handler;
             this.file = file;
         }
 
         @Override
-        public void run(){
+        protected void onHandleIntent(Intent intent) {
             try {
 
                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
@@ -296,6 +296,21 @@ class O2O {
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
             }
+        }
+
+        @Override
+        public void onCreate() {
+            super.onCreate();
+        }
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            return super.onStartCommand(intent, flags, startId);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
         }
     }
 }

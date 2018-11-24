@@ -305,7 +305,7 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
             case Jarvis.Actions.JOKE:{
                 // nothing
             } break;
-            default:Jarvis.query(getApplicationContext(), result);
+            default:Jarvis.query(getApplicationContext(), result, Jarvis.JARVIS_SCREEN);
         }
         tts.speak(result.getFulfillment().getSpeech(),TextToSpeech.QUEUE_FLUSH,null);
     }

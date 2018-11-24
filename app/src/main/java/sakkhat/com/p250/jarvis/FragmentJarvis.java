@@ -181,7 +181,7 @@ public class FragmentJarvis extends Fragment
             case Jarvis.Actions.JOKE:{
                 textResult.setText(result.getFulfillment().getSpeech());
             } break;
-            default:Jarvis.query(context, result);
+            default:Jarvis.query(context, result, Jarvis.TAG);
         }
         if(speaker)
             tts.speak(result.getFulfillment().getSpeech(),TextToSpeech.QUEUE_FLUSH,null);

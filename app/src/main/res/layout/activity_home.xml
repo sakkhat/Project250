@@ -24,6 +24,7 @@
         app:wheelItemRotateMode="none"
         app:wheelCursorHeight="10dp"
         app:wheelCursorColor="@color/white"
+        app:wheelBackgroundColor="@color/jarvis"
         android:layout_gravity="center_horizontal|center_vertical|bottom"
         android:layout_marginBottom="-160dp"
         android:layout_width="270dp"

@@ -77,6 +77,7 @@ public class FragmentSharing extends Fragment {
             public void onClick(View v) {
                 if(wifiManager.isWifiEnabled()){
                     // start activity
+                    startActivity(new Intent(context, GroupCasting.class));
                 }
             }
         });
