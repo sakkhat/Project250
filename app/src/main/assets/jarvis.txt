@@ -1,0 +1,62 @@
+Features:
+-------------------
+>Message Delete with Tag name (delete all message from GP)
+>Call Handle message. (I am in class)
+>
+
+
+
+
+ACTION_MOOD:
+--------------------------------------------------------
+make silent for 20 minites
+silent for 20 minits
+
+make vibrate mood for 20 minites
+vibrate mood for 20 minites
+
+
+make silent till 1:20 pm
+
+
+ACTION_CALL_FnF:
+----------------------------------------------------------
+call dad = call father = call abba  = call abbu = call papa = call baba = call dady
+call mom = call mother = call mommy = call amma = call ammu
+call @title -> save on sharedprefference
+
+
+ACTION_MUSIC:
+----------------------------------------------------------
+play a song, play the last music
+
+
+
+application  packages :
+--------------------------------------------------------------
+#WhatsApp:
+`````````````````````````
+PackageManager pm = context.getPackageManager();
+Intent i = new Intent(ACTION_MAIN);
+i = pm.getLauncherIntentForPackage("com.whatsapp");
+i.addCategory(Intent.CATEGORY_LAUNCHER);
+startActivity(i):
+
+#Browser:
+`````````````````````````````
+Default Home: https://google.com
+use uri: and category intent 
+
+#Youtube:
+`````````````````````````````
+link = https://www.youtube.com/results?search_query=********
+Intent i = new Intent(ACTION_VIEW);
+i.setData(link);
+i.setClassName("com.google.android.youtube");
+startActivity(i);
+
+#Music:
+```````````````````````````````````
+Intent i = new Intent(ACTION_VIEW);
+i.setType("music/*");
+startActivity(i);

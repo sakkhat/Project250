@@ -64,7 +64,7 @@ public class FragmentSharing extends Fragment {
             public void onClick(View v) {
                 if(wifiManager.isWifiEnabled()){
                     // start activity
-                    startActivity(new Intent(context,OneToOne.class));
+                    startActivity(new Intent(context,FileSharing.class));
                 }
                 else{
                     Toast.makeText(context,"Turn On Wifi",Toast.LENGTH_SHORT).show();
@@ -77,7 +77,7 @@ public class FragmentSharing extends Fragment {
             public void onClick(View v) {
                 if(wifiManager.isWifiEnabled()){
                     // start activity
-                    startActivity(new Intent(context, GroupCasting.class));
+                    //startActivity(new Intent(context, GroupCasting.class));
                 }
             }
         });

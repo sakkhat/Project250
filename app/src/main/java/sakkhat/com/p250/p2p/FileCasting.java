@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import sakkhat.com.p250.R;
 
-public class GroupCasting extends AppCompatActivity {
+public class FileCasting extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_casting);
+        setContentView(R.layout.activity_file_casting);
     }
 }
