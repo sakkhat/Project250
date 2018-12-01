@@ -1,6 +1,8 @@
 package sakkhat.com.p250.accessories;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,14 +17,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.ServiceUpater;
+import sakkhat.com.p250.helper.FileUtil;
 import sakkhat.com.p250.helper.FragmentListener;
 import sakkhat.com.p250.helper.Memory;
 import sakkhat.com.p250.services.ScreenAssistant;
@@ -41,7 +45,7 @@ public class FragmentAccessories extends Fragment{
     private SeekBar nightLightBar;
     private Switch nightLightSwitch;
     private Switch screenAssistSwitch;
-
+    private TextView aboutView;
 
 
     @Nullable
@@ -50,6 +54,7 @@ public class FragmentAccessories extends Fragment{
         root = inflater.inflate(R.layout.fragment_accessories,null,false);
         context = getContext();
         init(); // initialization of other stuffss
+        initEvents();
         return root;
     }
 
@@ -68,6 +73,25 @@ public class FragmentAccessories extends Fragment{
         else{
             nightLightBar.setProgress(progressed);// set as previous progressed
         }
+        //------------------------------------------------------------------------------------------------
+
+        //-------------------------------- Night Light Switch --------------------------------------------
+        nightLightSwitch = (Switch)root.findViewById(R.id.frag_access_night_mood_switch);
+        boolean switched = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);// retrieve night mode is on or off
+        nightLightSwitch.setChecked(switched); // set switched value
+        nightLightBar.setActivated(switched); // set activated value
+        //------------------------------------------------------------------------------------------------
+
+
+        //----------------------------------- Screen Assistant Switch ------------------------------------------------
+        screenAssistSwitch = root.findViewById(R.id.frag_access_screen_assist_switch);
+        screenAssistSwitch.setChecked(Memory.retrieveBool(context, ScreenAssistant.TAG));
+        //------------------------------------------------------------------------------------------------------------
+
+        aboutView = root.findViewById(R.id.frag_access_aboout);
+    }
+
+    private void initEvents(){
         nightLightBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -92,43 +116,7 @@ public class FragmentAccessories extends Fragment{
 
             }
         });
-        //------------------------------------------------------------------------------------------------
 
-        //-------------------------------- Night Light Switch --------------------------------------------
-        nightLightSwitch = (Switch)root.findViewById(R.id.frag_access_night_mood_switch);
-        boolean switched = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);// retrieve night mode is on or off
-        nightLightSwitch.setChecked(switched); // set switched value
-        nightLightBar.setActivated(switched); // set activated value
-
-        nightLightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        // request for permission
-                        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
-                                != PackageManager.PERMISSION_GRANTED){
-                            ActivityCompat.requestPermissions(getActivity(),new String[]
-                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},NIGHT_MODE_PERMISSION);
-                        }
-                    }
-                    else{
-                        nightLight();
-                    }
-                }
-                else{
-                    Memory.save(context,NightLightService.SWITCH_KEY,false);// save the switched off status
-                    nightLightBar.setActivated(false);// deactivated the seek bar
-                    context.stopService(new Intent(context, NightLightService.class));//stop service
-                    Log.d(TAG, "night mode deactivated");
-                }
-            }
-        });
-        //------------------------------------------------------------------------------------------------
-
-
-        //----------------------------------- Screen Assistant Switch ------------------------------------------------
-        screenAssistSwitch = root.findViewById(R.id.frag_access_screen_assist_switch);
         screenAssistSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -162,8 +150,38 @@ public class FragmentAccessories extends Fragment{
                 }
             }
         });
-        screenAssistSwitch.setChecked(Memory.retrieveBool(context, ScreenAssistant.TAG));
-        //------------------------------------------------------------------------------------------------------------
+
+        nightLightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        // request for permission
+                        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
+                                != PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(getActivity(),new String[]
+                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},NIGHT_MODE_PERMISSION);
+                        }
+                    }
+                    else{
+                        nightLight();
+                    }
+                }
+                else{
+                    Memory.save(context,NightLightService.SWITCH_KEY,false);// save the switched off status
+                    nightLightBar.setActivated(false);// deactivated the seek bar
+                    context.stopService(new Intent(context, NightLightService.class));//stop service
+                    Log.d(TAG, "night mode deactivated");
+                }
+            }
+        });
+
+        aboutView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     @Override
