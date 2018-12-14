@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
@@ -40,12 +41,17 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
     public static final String ACTION_NIGHT_ON = "s_a_n_off";
     public static final String ACTION_NIGHT_OFF = "s_a_n_on";
     public static final String ACTION_ASSIST_OFF = "s_a_off";
+    public static final String ACTION_RETURN_BASE = "s_a_base";
+
+    private static final int FLOAT_ASSIST = 1;
+    private static final int POP_WINDOW  = 2;
 
     private WindowManager wManager;
     private WindowManager.LayoutParams params;
-    private View floatingView;
     private GestureDetector detector;
-    private View popView;
+
+    private View floatingAssist;
+    private CardView popCard, floatIcon;
 
     private ServiceSwitcher switcherBroadcaster;
     private IntentFilter intentFilter;
@@ -58,6 +64,8 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
     private AIButton ai;
     private TextToSpeech tts;
     private Result result;
+
+    private int currentWindow;
 
     public ScreenAssistant(){
         Log.d(TAG, "constructor called");
@@ -105,73 +113,90 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
 
         detector = new GestureDetector(getApplicationContext(), new Detector());
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        wManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
         initFloatingView(inflater);
-        initPopWindowView(inflater);
-
-        wManager.addView(floatingView,params);
-        wManager.addView(popView, params);
+        wManager.addView(floatingAssist,params);
 
         initBroadcaster();
         initAI();
     }
 
     private void initFloatingView(LayoutInflater inflater){
-        floatingView = inflater.inflate(R.layout.floating_widget, null, false);
-        params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
-        wManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 
-        floatingView.findViewById(R.id.flow_widget).setLongClickable(true);
+        floatingAssist = inflater.inflate(R.layout.floating_assist, null, false);
+
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT){
+            params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+        else{
+            params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+
+        popCard = floatingAssist.findViewById(R.id.assist_pop_card);
+        floatIcon = floatingAssist.findViewById(R.id.flow_widget);
+        popCard.setVisibility(View.GONE);
+        floatIcon.setVisibility(View.VISIBLE);
+        currentWindow = FLOAT_ASSIST;
+
+        floatIcon.setLongClickable(true);
 
 
-        floatingView.findViewById(R.id.flow_widget).setOnTouchListener(new View.OnTouchListener() {
+        floatIcon.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return detector.onTouchEvent(event);
             }
         });
-        floatingView.setFocusable(true);
+        floatIcon.setFocusable(true);
+
+        initPopCardView();
+
+        Log.d(TAG,"screen assist initialized");
     }
 
-    private void initPopWindowView(LayoutInflater inflater){
-        popView = inflater.inflate(R.layout.assist_pop_window, null, false);
+    private void initPopCardView(){
 
-        btBase = popView.findViewById(R.id.assist_pop_base);
+        btBase = popCard.findViewById(R.id.assist_pop_base);
         btBase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(ACTION_RETURN_BASE);
+                sendBroadcast(i);
             }
         });
 
 
-        btEmergency = popView.findViewById(R.id.assist_pop_emergency);
+        btEmergency = popCard.findViewById(R.id.assist_pop_emergency);
         btEmergency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
             }
         });
 
 
-        btMinimize = popView.findViewById(R.id.assist_pop_minimize);
+        btMinimize = popCard.findViewById(R.id.assist_pop_minimize);
         btMinimize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popView.setEnabled(false);
-                popView.setVisibility(View.GONE);
 
-                floatingView.setVisibility(View.VISIBLE);
-                floatingView.setEnabled(true);
+                popCard.setVisibility(View.GONE);
+                floatIcon.setVisibility(View.VISIBLE);
+                currentWindow = FLOAT_ASSIST;
 
-                wManager.updateViewLayout(floatingView, params);
+                wManager.updateViewLayout(floatingAssist, params);
             }
         });
 
 
-        btNight = popView.findViewById(R.id.assist_pop_night);
+        btNight = popCard.findViewById(R.id.assist_pop_night);
         btNight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +215,7 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
             }
         });
 
-        btSwitch = popView.findViewById(R.id.assist_pop_switch);
+        btSwitch = popCard.findViewById(R.id.assist_pop_switch);
         btSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,9 +225,10 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
             }
         });
 
-        popView.setEnabled(false);
-        popView.setVisibility(View.GONE);
+        popCard.setEnabled(false);
+        popCard.setVisibility(View.GONE);
     }
+
 
     private void initBroadcaster(){
         switcherBroadcaster = new ServiceSwitcher();
@@ -234,8 +260,7 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"on destroy called");
-        wManager.removeView(floatingView);
-        wManager.removeView(popView);
+        wManager.removeView(floatingAssist);
         unregisterReceiver(switcherBroadcaster);
 
         stopForeground(true);
@@ -263,13 +288,11 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
 
-            floatingView.setEnabled(false);
-            floatingView.setVisibility(View.GONE);
+            floatIcon.setVisibility(View.GONE);
+            popCard.setVisibility(View.VISIBLE);
+            currentWindow = POP_WINDOW;
 
-            popView.setEnabled(true);
-            popView.setVisibility(View.VISIBLE);
-
-            wManager.updateViewLayout(popView,params);
+            wManager.updateViewLayout(floatingAssist,params);
             Log.d(TAG, "on single tap called");
             return true;
         }
@@ -277,10 +300,12 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
+            if(currentWindow == POP_WINDOW) return false;
+
             params.x = x - (int)(e1.getRawX()-e2.getRawX());
             params.y = y - (int)(e1.getRawY()-e2.getRawY());
 
-            wManager.updateViewLayout(floatingView,params);
+            wManager.updateViewLayout(floatingAssist,params);
 
             return true;
         }
