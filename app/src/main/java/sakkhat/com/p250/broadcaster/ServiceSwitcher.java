@@ -56,6 +56,11 @@ public class ServiceSwitcher extends BroadcastReceiver{
                 i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
                 context.startService(i);
             } break;
+
+            case ScreenAssistant.ACTION_RETURN_BASE:{
+                Intent i = new Intent(context.getPackageManager().getLaunchIntentForPackage("com.sakkhat.p250"));
+                context.startActivity(i);
+            } break;
         }
 
     }

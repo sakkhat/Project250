@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,71 +9,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp"
-    android:weightSum="10"
     tools:context="sakkhat.com.p250.p2p.FileSharing">
 
     <android.support.v7.widget.CardView
-        android:layout_weight="3.5"
+        android:id="@+id/file_share_head_card"
+        app:cardBackgroundColor="@color/darkGreen"
+        app:cardCornerRadius="15dp"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
-
-        <ListView
-            android:id="@+id/fshare_device_list_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:layout_marginTop="5dp"
-        android:layout_weight="0.8"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/fshare_connect_device"
-            android:text="No Device"
-            android:textSize="20dp"
-            android:textColor="@color/black"
+            android:id="@+id/file_share_remote_dname"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="Connected: Samsung Galaxy S3"
+            android:textColor="@color/white"
             android:textAlignment="center"
-            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
     </android.support.v7.widget.CardView>
+
     <ListView
-        android:id="@+id/fshare_file_queue_list_view"
-        android:layout_weight="4.7"
+        android:id="@+id/file_share_list"
+        android:layout_below="@id/file_share_head_card"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="8.2"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="wrap_content"/>
 
-    </ListView>
-
-    <android.support.v7.widget.CardView
-        android:layout_weight="1"
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:weightSum="10"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
-        <LinearLayout
-            android:weightSum="10"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.CardView
+            app:cardBackgroundColor="@color/darkGreen"
+            app:cardCornerRadius="15dp"
+            android:layout_weight="8"
+            android:layout_width="0dp"
+            android:layout_height="40dp">
             <TextView
+                android:id="@+id/file_share_select_file"
                 android:text="Select File"
-                android:textColor="@color/black"
                 android:textAlignment="center"
-                android:layout_gravity="center_vertical"
-                android:id="@+id/fshare_select_file"
-                android:layout_weight="8"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />
-
-            <ImageButton
-                android:id="@+id/fshare_file_sent"
-                android:backgroundTint="@color/jarvis"
-                android:src="@drawable/ic_sent"
-                android:layout_weight="2"
-                android:layout_width="0dp"
+                android:gravity="center"
+                android:textSize="18dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:textColor="@color/white"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:maxLines="1"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-</LinearLayout>
+        </android.support.v7.widget.CardView>
+        <android.support.v7.widget.CardView
+            android:id="@+id/file_share_sent_file"
+            app:cardCornerRadius="15dp"
+            app:cardBackgroundColor="@color/darkGreen"
+            android:layout_weight="1.8"
+            android:layout_marginLeft="5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_sent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</RelativeLayout>
