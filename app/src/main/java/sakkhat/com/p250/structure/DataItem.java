@@ -7,6 +7,7 @@ import sakkhat.com.p250.helper.Sizer;
  */
 
 public class DataItem {
+
     private String type;
     private String name;
     private boolean completed;
@@ -48,6 +49,9 @@ public class DataItem {
     }
 
     public void setProgress(long bytes) {
+        if(!remoteFile){
+            bytes = size - bytes;
+        }
         if(bytes == size){
             completed = true;
         }
@@ -62,5 +66,13 @@ public class DataItem {
 
     public int getProgress(){
         return progress;
+    }
+
+    public long getSize(){
+        return size;
+    }
+
+    public boolean isRemoteFile(){
+        return remoteFile;
     }
 }

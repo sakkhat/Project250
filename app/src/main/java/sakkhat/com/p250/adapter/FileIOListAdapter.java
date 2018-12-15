@@ -30,6 +30,7 @@ public class FileIOListAdapter extends ArrayAdapter<DataItem> {
 
         this.context = context;
         this.resource = resource;
+        this.list = list;
     }
 
     @NonNull
@@ -49,12 +50,17 @@ public class FileIOListAdapter extends ArrayAdapter<DataItem> {
 
         holder.name.setText(list.get(position).getName());
         holder.type.setText(list.get(position).getType());
+
         if(list.get(position).isCompleted()){
             holder.status.setProgress(holder.status.getMax());
         }
         else{
             holder.status.setMax(list.get(position).getMax());
             holder.status.setProgress(list.get(position).getProgress());
+        }
+
+        if(list.get(position).isRemoteFile()){
+            holder.ioType.setImageResource(R.drawable.ic_file_download);
         }
 
         return row;
@@ -71,6 +77,8 @@ public class FileIOListAdapter extends ArrayAdapter<DataItem> {
             name = row.findViewById(R.id.row_o2o_file_name);
             status = row.findViewById(R.id.row_o2o_file_progress_status);
             ioType = row.findViewById(R.id.row_o2o_io_type);
+
+            name.setSelected(true);
         }
     }
 

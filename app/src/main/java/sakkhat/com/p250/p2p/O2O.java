@@ -1,8 +1,6 @@
 package sakkhat.com.p250.p2p;
 
-import android.os.Environment;
 import android.os.Handler;
-import android.text.LoginFilter;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -16,6 +14,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import sakkhat.com.p250.structure.DataItem;
+
 /**
  * Created by Rafiul Islam on 29-Nov-18.
  */
@@ -24,10 +24,12 @@ public class O2O {
 
     private static final int PORT = 15008;
     public static final int SOCKET_ESTABLISHED = 11;
-    public static final int FILE_NAME = 12;
-    public static final int FILE_SIZE = 13;
-    public static final int FILE_SENT_CONFIRM = 14;
-    public static final int FILE_RECEIVED_CONFIRM = 15;
+    public static final int FILE_SENT_CONFIRM = 12;
+    public static final int FILE_RECEIVED_CONFIRM = 13;
+    public static final int FILE_RECEIVE_REQUEST = 14;
+    public static final int FILE_RECEIVE_PROGRESS = 15;
+    public static final int FILE_SENT_PROGRESS = 16;
+    public static final int SOCKET_CLOSED = 18;
 
     public static class Server extends Thread{
         private static final String TAG = "o2o_server_thread";
@@ -76,10 +78,12 @@ public class O2O {
         private static final String TAG = "file_receiver";
         private Socket socket;
         private Handler handler;
+        private String path;
 
-        public Receiver(Handler handler, Socket socket){
+        public Receiver(Handler handler, Socket socket, String path){
             this.handler = handler;
             this.socket = socket;
+            this.path = path;
 
             Log.d(TAG, "constructed");
 
@@ -92,7 +96,7 @@ public class O2O {
                 DataInputStream dis =  new DataInputStream(socket.getInputStream());
                 BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
 
-                File dir = new File(Environment.getExternalStorageDirectory()+"/p2p");
+                File dir = new File(path);
                 if(!dir.exists()){
                     dir.mkdir();
                 }
@@ -100,8 +104,11 @@ public class O2O {
                 while (socket != null || !socket.isClosed()){
                     String fileName = dis.readUTF();
                     long fileSize = dis.readLong();
-                    long load = 0;
 
+                    handler.obtainMessage(FILE_RECEIVE_REQUEST,
+                            new DataItem(fileName, fileSize, true)).sendToTarget();
+
+                    long load = 0;
                     File file = new File(dir+"/"+fileName);
                     FileOutputStream fos = new FileOutputStream(file);
 
@@ -110,19 +117,20 @@ public class O2O {
                     byte[] kb64 = new byte[64*1024];
 
                     while((readLength = bis.read(kb64, 0, kb64.length)) != 0){
-                        fos.write(kb64, 0, readLength);
                         load += readLength;
-
-                        Log.w(TAG, "received: "+Long.toString(load));
+                        fos.write(kb64, 0, readLength);
+                        /*handler.obtainMessage(FILE_RECEIVE_PROGRESS,
+                                Long.valueOf(load)).sendToTarget();*/
                         if(load == fileSize){
-                            Log.d(TAG, "file received");
                             break;
                         }
                     }
+
                     fos.flush();
                     fos.close();
                     handler.obtainMessage(FILE_RECEIVED_CONFIRM).sendToTarget();
                 }
+                handler.obtainMessage(SOCKET_CLOSED).sendToTarget();
             } catch (IOException ex){
                 Log.e(TAG, ex.toString());
             }
@@ -162,6 +170,8 @@ public class O2O {
                 while((readLength = fis.read(kb64, 0, kb64.length)) > 0){
                     available -= readLength;
                     bos.write(kb64, 0, readLength);
+                    handler.obtainMessage(FILE_SENT_PROGRESS,
+                            Long.valueOf(available)).sendToTarget();
                     if(available <= 0){
                         bos.flush();
                         fis.close();

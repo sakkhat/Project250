@@ -59,6 +59,7 @@ public class FragmentSharing extends Fragment implements WifiP2pManager.PeerList
     private List<WifiP2pDevice> p2pDevices;
 
     private DeviceItemAdapter adapter;
+    private String selectedDeviceName;
 
     @Nullable
     @Override
@@ -111,7 +112,7 @@ public class FragmentSharing extends Fragment implements WifiP2pManager.PeerList
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = p2pDevices.get(position).deviceAddress;
                 p2pManager.connect(p2pChannel, config, FragmentSharing.this);
-
+                selectedDeviceName = deviceList.get(position);
                 Log.d(TAG, "clicked: "+position);
             }
         });
