@@ -2,8 +2,6 @@ package sakkhat.com.p250.jarvis;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.speech.tts.TextToSpeech;
@@ -19,19 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonElement;
-
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Queue;
 
 import ai.api.AIListener;
 import ai.api.AIServiceException;
@@ -40,10 +31,7 @@ import ai.api.android.AIService;
 import ai.api.model.AIError;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
-import ai.api.model.ResponseMessage;
 import ai.api.model.Result;
-import de.hdodenhof.circleimageview.CircleImageView;
-import sakkhat.com.p250.Home;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.helper.FragmentListener;
 
@@ -51,15 +39,22 @@ public class FragmentJarvis extends Fragment
         implements AIListener{
     private static final String TAG = "fragment_jarvis";
 
+    /*
+    * Fragment base
+    * */
     private View root;
     private Context context;
-    // AI components
-
-
-    private AIService aiService;
     private FragmentListener fragmentListener;
+
+    /*
+    * AI Components
+    * */
+    private AIService aiService;
     private TextToSpeech tts;
 
+    /*
+    * UI Components
+    * */
     private ImageView icJarvis, icSpeaker;
     private TextView textResult;
     private ImageView voiceInput;
@@ -67,6 +62,11 @@ public class FragmentJarvis extends Fragment
 
     private boolean speaker;
     private Animation animation;
+
+    /*
+    * Data collections
+    * */
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -175,41 +175,16 @@ public class FragmentJarvis extends Fragment
     }
 
     @Override
-    public void onResult(AIResponse result1) {
-        Result result = result1.getResult();
-
-        String parameterString = "";
-        String app="";
-        if (result.getParameters() != null && !result.getParameters().isEmpty()) {
-            for (final Map.Entry<String, JsonElement> entry : result.getParameters().entrySet()) {
-                if(entry.getKey().contains("app_name"))
-                    app=entry.getValue().toString();
-                parameterString += "(" + entry.getKey() + ", " + entry.getValue() + ") ";
-            }
+    public void onResult(AIResponse aiResult) {
+        Result result = aiResult.getResult();
+        switch (result.getAction().trim()){
+            case Jarvis.Actions.JOKE:{
+                textResult.setText(result.getFulfillment().getSpeech());
+            } break;
+            default:Jarvis.query(context, result, Jarvis.TAG);
         }
-        textResult.setText(result.getAction()+" rest : "+result.getResolvedQuery()+" : "+result.getFulfillment().getSpeech());
-
-        if(result.getAction().equals("app_switch")) {
-            app=app.substring(1,app.length()-1);
-            List<PackageInfo>pack=getActivity().getPackageManager().getInstalledPackages(0);
-            for(PackageInfo p : pack)
-            {
-                String app_name=p.applicationInfo.loadLabel(getActivity().getPackageManager()).toString();
-                String pkg=p.packageName;
-                Toast.makeText(getActivity(),app_name+" "+pkg,Toast.LENGTH_SHORT).show();
-                if(app_name.compareToIgnoreCase(app)==0)
-                {
-                    Intent intent=new Intent();
-                    intent.setPackage(pkg);
-                    startActivity(intent);
-                    break;
-                }
-            }
-        }
-        else {
-            if(speaker)
+        if(speaker)
             tts.speak(result.getFulfillment().getSpeech(),TextToSpeech.QUEUE_FLUSH,null);
-        }
 
     }
 

@@ -3,10 +3,16 @@ package sakkhat.com.p250.broadcaster;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
 
+import java.io.Serializable;
+import java.util.Locale;
+
+import ai.api.model.Result;
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.helper.Memory;
+import sakkhat.com.p250.jarvis.Jarvis;
 import sakkhat.com.p250.services.NightLightService;
 import sakkhat.com.p250.services.ScreenAssistant;
 
@@ -14,7 +20,9 @@ import sakkhat.com.p250.services.ScreenAssistant;
  * Created by Rafiul Islam on 05-Oct-18.
  */
 
-public class ServiceSwitcher extends BroadcastReceiver {
+public class ServiceSwitcher extends BroadcastReceiver{
+
+    private TextToSpeech tts;
 
     public ServiceSwitcher(){
 
@@ -49,9 +57,11 @@ public class ServiceSwitcher extends BroadcastReceiver {
                 context.startService(i);
             } break;
 
-            case ScreenAssistant.ACTION_JARVIS:{
-
+            case ScreenAssistant.ACTION_RETURN_BASE:{
+                Intent i = new Intent(context.getPackageManager().getLaunchIntentForPackage("com.sakkhat.p250"));
+                context.startActivity(i);
             } break;
         }
+
     }
 }

@@ -63,3 +63,9 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+#Test dirs
+**/app/src/test/
+**/app/src/androidTest/
+app/src/test/
+app/src/androidTest/

@@ -4,69 +4,101 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.DocumentsContract;
-
+import android.provider.MediaStore;
 /**
- * Created by Rafiul Islam on 03-Nov-18.
+ * Created by Rafiul Islam on 01-Dec-18.
  */
 
 public class FileUtil {
 
-    /**
-     * Selected files from content provider android return an uri of content table.
-     * This uri make a file unique to address on an android device. But for stream a file
-     * there need the absolute storage location of the selected file.
-     *
-     * FileUtil class defined some static method to retrieve the real path location from uri data.
-     * */
+    public static String getPath(final Context context, final Uri uri){
 
+        if(DocumentsContract.isDocumentUri(context, uri)){
+            if(isExternalStorageDoc(uri)){
+                final String docID = DocumentsContract.getDocumentId(uri);
+                final String[] split = docID.split(":");
+                final String type = split[0];
 
-    /**
-     * static class to find out the real path of a file from its uri data.
-     * @param context context from where this static method called.
-     * @param uri file uri address
-     * @return real path of the file or null
-     * */
-    public static String getPath(Context context, Uri uri){
-        /**
-         * ensure that the uri in a content uri
-         * */
-        if(uri.getScheme().equalsIgnoreCase("content")) {
-            /**
-             * for download contents transform the uri to download uri
-             * */
-            if(uri.getAuthority().equalsIgnoreCase("com.android.providers.downloads.documents")){
-                uri = converUri(uri);
-            }
-            String[] projection = {"_data"};
-            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            if(cursor!= null && cursor.getColumnCount() > 0){
-                int index = cursor.getColumnIndexOrThrow("_data");
-                if(cursor.moveToFirst()){
-                    return  cursor.getString(index);
+                if(type.equalsIgnoreCase("primary")){
+                    return Environment.getExternalStorageDirectory()+"/"+split[1];
                 }
             }
+            else if(isDownloadDoc(uri)){
+                final String docID = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
+                        Long.valueOf(docID));
+
+                return getDataColumn(context, contentUri, null, null);
+            }
+            else if(isMediaDoc(uri)){
+                final String docID = DocumentsContract.getDocumentId(uri);
+                final String[] split = docID.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if(type.equalsIgnoreCase("image")){
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                }
+                else if(type.equalsIgnoreCase("video")){
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                }
+                else if(type.equalsIgnoreCase("audio")){
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[]{split[1]};
+
+                // return getDataCol(context, contentUri, selection, selectionArgs)
+                return getDataColumn(context, uri, selection, selectionArgs);
+            }
         }
-        /**
-        * ensure the the uri is a file actual location uri
-        * */
+        else if(uri.getScheme().equalsIgnoreCase("content")){
+            if(isGooglePhotosUri(uri)){
+                return uri.getLastPathSegment();
+            }
+
+            return getDataColumn(context, uri, null, null);
+        }
+
         else if(uri.getScheme().equalsIgnoreCase("file")){
             return uri.getPath();
         }
-
-        // return null otherwise
         return null;
     }
 
-    /**
-     * convert the uri from media location to download
-     * @param uri base uri
-     * @return converted uri
-     * */
-    private static Uri converUri(Uri uri){
-        final String docID = DocumentsContract.getDocumentId(uri);
-        uri = ContentUris.withAppendedId(
-                Uri.parse("content://downloads/public_downloads"), Long.valueOf(docID));
-        return uri;
+    private static String getDataColumn(Context context, Uri uri, String selction, String[] selectionArgs){
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection  = { column };
+
+        try{
+            cursor = context.getContentResolver().query(uri, projection,selction,selectionArgs,null);
+            if(cursor != null && cursor.getColumnCount() > 0){
+                final int index = cursor.getColumnIndexOrThrow(column);
+                if(cursor.moveToFirst()){
+                    return cursor.getString(index);
+                }
+            }
+        } finally {
+            if(cursor != null){
+                cursor.close();
+            }
+        }
+        return null;
+    }
+    private static boolean isExternalStorageDoc(Uri uri){
+        return uri.getAuthority().equals("com.android.externalstorage.documents");
+    }
+    private static boolean isDownloadDoc(Uri uri){
+        return uri.getAuthority().equals("com.android.providers.downloads.documents");
+    }
+    private static boolean isMediaDoc(Uri uri){
+        return uri.getAuthority().equals("com.android.providers.media.documents");
+    }
+    private static boolean isGooglePhotosUri(Uri uri){
+        return uri.getAuthority().equals("com.google.android.apps.photos.content");
     }
 }
