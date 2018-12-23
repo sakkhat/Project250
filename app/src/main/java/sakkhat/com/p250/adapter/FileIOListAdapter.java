@@ -13,19 +13,19 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import sakkhat.com.p250.R;
-import sakkhat.com.p250.structure.DataItem;
+import sakkhat.com.p250.structure.IOItem;
 
 /**
  * Created by Rafiul Islam on 14-Nov-18.
  */
 
-public class FileIOListAdapter extends ArrayAdapter<DataItem> {
+public class FileIOListAdapter extends ArrayAdapter<IOItem> {
 
     private Context context;
     private int resource;
-    private ArrayList<DataItem> list;
+    private ArrayList<IOItem> list;
 
-    public FileIOListAdapter(Context context, int resource, ArrayList<DataItem> list) {
+    public FileIOListAdapter(Context context, int resource, ArrayList<IOItem> list) {
         super(context, resource, list);
 
         this.context = context;
@@ -49,8 +49,6 @@ public class FileIOListAdapter extends ArrayAdapter<DataItem> {
         }
 
         holder.name.setText(list.get(position).getName());
-        holder.type.setText(list.get(position).getType());
-
         if(list.get(position).isCompleted()){
             holder.status.setProgress(holder.status.getMax());
         }
@@ -67,16 +65,14 @@ public class FileIOListAdapter extends ArrayAdapter<DataItem> {
     }
 
     private static class Holder{
-        TextView type;
         TextView name;
         ProgressBar status;
         ImageView ioType;
 
         public Holder(View row){
-            type = row.findViewById(R.id.row_io_o2o_file_type);
-            name = row.findViewById(R.id.row_o2o_file_name);
-            status = row.findViewById(R.id.row_o2o_file_progress_status);
-            ioType = row.findViewById(R.id.row_o2o_io_type);
+            name = row.findViewById(R.id.row_file_io_fname);
+            status = row.findViewById(R.id.row_file_io_progress);
+            ioType = row.findViewById(R.id.row_file_io_img);
 
             name.setSelected(true);
         }

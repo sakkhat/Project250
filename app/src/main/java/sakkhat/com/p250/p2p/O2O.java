@@ -11,10 +11,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import sakkhat.com.p250.structure.DataItem;
+import sakkhat.com.p250.structure.IOItem;
 
 /**
  * Created by Rafiul Islam on 29-Nov-18.
@@ -22,7 +23,7 @@ import sakkhat.com.p250.structure.DataItem;
 
 public class O2O {
 
-    private static final int PORT = 15008;
+    private static final int PORT = 8050;
     public static final int SOCKET_ESTABLISHED = 11;
     public static final int FILE_SENT_CONFIRM = 12;
     public static final int FILE_RECEIVED_CONFIRM = 13;
@@ -32,8 +33,10 @@ public class O2O {
     public static final int SOCKET_CLOSED = 18;
 
     public static class Server extends Thread{
-        private static final String TAG = "o2o_server_thread";
+        private static final String TAG = "p2p_server_thread";
+
         private Handler handler;
+
         public Server(Handler handler){
             this.handler = handler;
 
@@ -44,6 +47,7 @@ public class O2O {
             try{
                 ServerSocket ss = new ServerSocket(PORT);
                 Socket socket = ss.accept();
+
                 handler.obtainMessage(SOCKET_ESTABLISHED, socket).sendToTarget();
             }catch (IOException ex){
                 Log.e(TAG, ex.toString());
@@ -52,11 +56,11 @@ public class O2O {
     }
 
     public static class Client extends Thread{
-        private static final String TAG = "o2o_client_thread";
+        private static final String TAG = "p2p_client_thread";
 
         private Handler handler;
-        private String host;
-        public Client(Handler handler, String host){
+        private InetAddress host;
+        public Client(Handler handler, InetAddress host){
             this.handler = handler;
             this.host = host;
 
@@ -75,7 +79,7 @@ public class O2O {
     }
 
     public static class Receiver extends Thread{
-        private static final String TAG = "file_receiver";
+        private static final String TAG = "p2p_file_receiver";
         private Socket socket;
         private Handler handler;
         private String path;
@@ -85,7 +89,7 @@ public class O2O {
             this.socket = socket;
             this.path = path;
 
-            Log.d(TAG, "constructed");
+            Log.d(TAG, "receiver constructed");
 
             this.start();
         }
@@ -106,7 +110,7 @@ public class O2O {
                     long fileSize = dis.readLong();
 
                     handler.obtainMessage(FILE_RECEIVE_REQUEST,
-                            new DataItem(fileName, fileSize, true)).sendToTarget();
+                            new IOItem(fileName, fileSize, true)).sendToTarget();
 
                     long load = 0;
                     File file = new File(dir+"/"+fileName);
@@ -119,8 +123,6 @@ public class O2O {
                     while((readLength = bis.read(kb64, 0, kb64.length)) != 0){
                         load += readLength;
                         fos.write(kb64, 0, readLength);
-                        /*handler.obtainMessage(FILE_RECEIVE_PROGRESS,
-                                Long.valueOf(load)).sendToTarget();*/
                         if(load == fileSize){
                             break;
                         }
@@ -139,7 +141,7 @@ public class O2O {
 
     public static class Sender extends Thread{
 
-        private static final String TAG = "o2o_sender_thread";
+        private static final String TAG = "p2p_sender_thread";
 
         private Handler handler;
         private Socket socket;
@@ -170,8 +172,6 @@ public class O2O {
                 while((readLength = fis.read(kb64, 0, kb64.length)) > 0){
                     available -= readLength;
                     bos.write(kb64, 0, readLength);
-                    handler.obtainMessage(FILE_SENT_PROGRESS,
-                            Long.valueOf(available)).sendToTarget();
                     if(available <= 0){
                         bos.flush();
                         fis.close();

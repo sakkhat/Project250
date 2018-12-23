@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="2dp"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_marginBottom="4dp"
+    android:layout_marginBottom="5dp"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
@@ -11,63 +11,44 @@
         app:cardCornerRadius="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:weightSum="10"
-            android:padding="5dp"
-            android:orientation="horizontal"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/row_file_io_img"
+                android:padding="5dp"
+                android:src="@drawable/ic_file_upload"
+                android:layout_width="35dp"
+                android:layout_height="35dp"/>
             <TextView
-                android:id="@+id/row_io_o2o_file_type"
-                android:text="N/A"
-                android:textColor="@color/white"
-                android:textAlignment="center"
-                android:gravity="center_vertical"
-                android:background="@drawable/dark_circle"
-                android:layout_weight="1.5"
+                android:id="@+id/row_file_io_fname"
+                android:maxLines="1"
+                android:text="file name"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:padding="2dp"
                 android:textSize="15dp"
-                android:layout_width="0dp"
-                android:layout_height="50dp" />
+                android:layout_marginEnd="5dp"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:layout_marginStart="40dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_weight="8.5"
-                android:layout_width="0dp"
-                android:layout_height="50dp">
+            <ProgressBar
+                android:id="@+id/row_file_io_progress"
+                android:layout_below="@id/row_file_io_fname"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_marginStart="40dp"
+                android:progress="50"
+                android:max="100"
+                android:layout_marginBottom="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-                <TextView
-                    android:id="@+id/row_o2o_file_name"
-                    android:textColor="@color/bg_wheel"
-                    android:padding="2dp"
-                    android:textAlignment="center"
-                    android:hint="File Name"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp" />
-                <LinearLayout
-                    android:weightSum="10"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ImageView
-                        android:id="@+id/row_o2o_io_type"
-                        android:src="@drawable/ic_file_upload"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" />
-                    <ProgressBar
-                        android:id="@+id/row_o2o_file_progress_status"
-                        android:padding="2dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="9"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+        </RelativeLayout>
 
-                </LinearLayout>
-            </LinearLayout>
-
-        </LinearLayout>
     </android.support.v7.widget.CardView>
+
+
 </LinearLayout>

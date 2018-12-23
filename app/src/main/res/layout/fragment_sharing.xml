@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_fragment_sharing"
@@ -7,72 +7,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="4dp"
+    android:background="@color/jarvis"
     tools:context=".p2p.FragmentSharing">
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/frag_share_head_card"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="10dp"
-        app:cardUseCompatPadding="true"
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_single_sharing"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:weightSum="10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Wifi"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                android:textColor="@color/black"
-                android:layout_weight="6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />
-            <Switch
-                android:id="@+id/frag_share_wifi_switch"
-                android:layout_marginLeft="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        android:layout_height="wrap_content" />
 
-    <GridView
-        android:id="@+id/frag_share_grid"
-        android:columnWidth="100dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:numColumns="auto_fit"
-        android:layout_below="@id/frag_share_head_card"
+    <Button
+        android:id="@+id/frag_share_gotoShare"
+        android:text="share"
+        android:textSize="25dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/round_rect_white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <ProgressBar
-        android:id="@+id/frag_share_search_progress"
-        android:visibility="gone"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <android.support.v7.widget.CardView
-        app:cardCornerRadius="10dp"
-        app:cardUseCompatPadding="true"
-        app:cardBackgroundColor="@color/white"
-        android:id="@+id/frag_share_search"
-        android:layout_width="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
-        <TextView
-            android:text="Search Devices"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:textColor="@color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </android.support.v7.widget.CardView>
-</RelativeLayout>
+        android:layout_height="wrap_content" />
+</LinearLayout>
