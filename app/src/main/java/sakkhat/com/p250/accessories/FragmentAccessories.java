@@ -34,6 +34,8 @@ import sakkhat.com.p250.helper.FragmentListener;
 import sakkhat.com.p250.helper.Memory;
 import sakkhat.com.p250.services.ScreenAssistant;
 import sakkhat.com.p250.services.NightLightService;
+import sakkhat.com.p250.alarmComp.AlarmActivity;
+
 
 public class FragmentAccessories extends Fragment{
 
@@ -166,7 +168,8 @@ public class FragmentAccessories extends Fragment{
         aboutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                   Intent intent =new Intent(context,AlarmActivity.class);
+                   startActivity(intent);
             }
         });
     }

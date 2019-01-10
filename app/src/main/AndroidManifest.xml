@@ -12,7 +12,8 @@
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -50,9 +51,11 @@
             android:name=".broadcaster.ServiceUpater"
             android:enabled="true"
             android:exported="true" />
+        <receiver android:name=".broadcaster.Schedular" />
 
         <activity android:name=".accessories.About" />
         <activity android:name=".p2p.FileSharing" />
+        <activity android:name=".alarmComp.AlarmActivity"></activity>
     </application>
 
 </manifest>
