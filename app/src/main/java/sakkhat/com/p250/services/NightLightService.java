@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -103,11 +104,21 @@ public class NightLightService extends Service {
         //---------------------------------------------------------------------------------------
 
         //--------------------- Window Manager and Layout Paramas-----------------------------
+
+        int TYPE;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            TYPE = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+        else{
+            TYPE = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        }
+
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                TYPE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;// flag layout in screen

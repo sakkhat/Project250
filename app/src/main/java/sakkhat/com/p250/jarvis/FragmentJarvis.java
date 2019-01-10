@@ -90,8 +90,11 @@ public class FragmentJarvis extends Fragment
         * instance and initialize of DialogFlow AI agent and Text-To-Speech API objects
         * */
 
-        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED)
-             ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},101);
+        if(ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},101);
+            Log.d(TAG, "jarvis requested for permission");
+        }
+
 
         final AIConfiguration config=new AIConfiguration(Jarvis.TOKEN,
                 AIConfiguration.SupportedLanguages.English,AIConfiguration.RecognitionEngine.System);
@@ -167,10 +170,12 @@ public class FragmentJarvis extends Fragment
 
         if(requestCode==101)
         {
-            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                ;
-            else
-                ;
+            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG,"request accepted");
+            }
+            else{
+                Log.d(TAG, "onRequestPermissionsResult: NOT granted");
+            }
         }
     }
 
@@ -247,8 +252,13 @@ public class FragmentJarvis extends Fragment
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            onResult(response);
-            textInput.setText("");
+            try{
+                onResult(response);
+            } catch (Exception e){
+                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
+            } finally {
+                textInput.setText("");
+            }
 
             textResult.setEnabled(true);
             voiceInput.setEnabled(true);

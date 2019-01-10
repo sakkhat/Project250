@@ -6,9 +6,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -35,8 +38,8 @@ import sakkhat.com.p250.services.NightLightService;
 public class FragmentAccessories extends Fragment{
 
     public static final String TAG = "fragment_accessories";// class tag
-    private static final int NIGHT_MODE_PERMISSION = 973;
-    private static final int SCREEN_ASSIST_PERMISSION = 375;
+    private static final int NIGHT_LIGHT_PERMISSION = 973;
+    private static final int SCREEN_ASSIST_PERMISSION = 974;
 
     private View root;// root view by layout inflate
     private Context context;// context of this fragment
@@ -62,6 +65,7 @@ public class FragmentAccessories extends Fragment{
     * initialize all components and other stuffs
     * */
     private void init(){
+
         //------------------------ Night Light Seek Bar -------------------------------------------------
         nightLightBar = (SeekBar)root.findViewById(R.id.frag_access_night_light_bar);
         nightLightBar.setMax(100); // set max progress value
@@ -123,25 +127,11 @@ public class FragmentAccessories extends Fragment{
                 if(isChecked){
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                         // request for permission
-                        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
-                                != PackageManager.PERMISSION_GRANTED){
-                            ActivityCompat.requestPermissions(getActivity(),new String[]
-                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},SCREEN_ASSIST_PERMISSION);
-                        }
+                        checkPermission(SCREEN_ASSIST_PERMISSION);
                     }
                     else{
-                        Intent i = new Intent(context, ScreenAssistant.class);
-                        i.setAction(TAG);
-                        boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
-                        i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
-                        if(isNightOn){
-                            i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
-                        }
-                        else{
-                            i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
-                        }
-                        context.startService(i);
-                        Memory.save(context, ScreenAssistant.TAG, true);
+                        turnOnScreenAssist();
+                        Log.d(TAG,"screen assist permission already allowed");
                     }
                 }
                 else{
@@ -157,14 +147,11 @@ public class FragmentAccessories extends Fragment{
                 if(isChecked){
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                         // request for permission
-                        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.SYSTEM_ALERT_WINDOW)
-                                != PackageManager.PERMISSION_GRANTED){
-                            ActivityCompat.requestPermissions(getActivity(),new String[]
-                                    {Manifest.permission.SYSTEM_ALERT_WINDOW},NIGHT_MODE_PERMISSION);
-                        }
+                        checkPermission(NIGHT_LIGHT_PERMISSION);
                     }
                     else{
-                        nightLight();
+                        turnNightLightOn();
+                        Log.d(TAG,"night light permission already allowed");
                     }
                 }
                 else{
@@ -184,32 +171,10 @@ public class FragmentAccessories extends Fragment{
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == NIGHT_MODE_PERMISSION){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                nightLight();
-            }
-        }
-        else if(requestCode == SCREEN_ASSIST_PERMISSION){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Intent i = new Intent(context, ScreenAssistant.class);
-                i.setAction(TAG);
-                boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
-                i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
-                if(isNightOn){
-                    i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
-                }
-                else{
-                    i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
-                }
-                context.startService(i);
-                Memory.save(context, ScreenAssistant.TAG, true);
-            }
-        }
-    }
 
-    private void nightLight(){
+
+
+    private void turnNightLightOn(){
         Memory.save(context,NightLightService.SWITCH_KEY,true);// save switched on status
         nightLightBar.setActivated(true);// actiaved the seek bar to perform
         if(Memory.retrieveInt(context,NightLightService.LIGHT_KEY) == Memory.DEFAUL_INT){
@@ -221,5 +186,69 @@ public class FragmentAccessories extends Fragment{
         context.startService(new Intent(context, NightLightService.class));//start service
         Log.d(TAG, "night mode activated");
     }
-    
+
+    private void turnOnScreenAssist(){
+        Intent i = new Intent(context, ScreenAssistant.class);
+        i.setAction(TAG);
+        boolean isNightOn = Memory.retrieveBool(context, NightLightService.SWITCH_KEY);
+        i.putExtra(NightLightService.SWITCH_KEY, isNightOn);
+        if(isNightOn){
+            i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
+        }
+        else{
+            i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
+        }
+        context.startService(i);
+        Memory.save(context, ScreenAssistant.TAG, true);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkPermission(int permissionCode){
+        if(!Settings.canDrawOverlays(context)){
+            if(permissionCode == NIGHT_LIGHT_PERMISSION){
+                Log.w(TAG,"night light request for permission");
+            }
+            else if(permissionCode == SCREEN_ASSIST_PERMISSION){
+                Log.w(TAG,"screen assist request for permission");
+            }
+            Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:"+ context.getPackageName()));
+            startActivityForResult(i, permissionCode);
+        }
+        else{
+            if(permissionCode == SCREEN_ASSIST_PERMISSION){
+                turnOnScreenAssist();
+            }
+            else if(permissionCode == NIGHT_LIGHT_PERMISSION){
+                turnNightLightOn();
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(resultCode == getActivity().RESULT_OK){
+            if(requestCode == SCREEN_ASSIST_PERMISSION){
+                if(!Settings.canDrawOverlays(context)){
+                    checkPermission(SCREEN_ASSIST_PERMISSION);
+                }
+                else{
+                    turnOnScreenAssist();
+                    Log.d(TAG, "screen assist on");
+                }
+            }
+            else if(requestCode == NIGHT_LIGHT_PERMISSION){
+                if(!Settings.canDrawOverlays(context)){
+                    checkPermission(NIGHT_LIGHT_PERMISSION);
+                }
+                else{
+                    turnNightLightOn();
+                    Log.d(TAG,"night light on");
+                }
+            }
+        }
+    }
 }

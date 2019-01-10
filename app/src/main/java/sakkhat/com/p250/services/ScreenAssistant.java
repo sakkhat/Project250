@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 
 import java.util.Locale;
@@ -126,19 +127,21 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
 
         floatingAssist = inflater.inflate(R.layout.floating_assist, null, false);
 
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT){
-            params = new WindowManager.LayoutParams(
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
+        int TYPE_FLAG;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            TYPE_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         }
         else{
-            params = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
-                    WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
+           TYPE_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
         }
+
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                TYPE_FLAG,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+
 
         popCard = floatingAssist.findViewById(R.id.assist_pop_card);
         floatIcon = floatingAssist.findViewById(R.id.flow_widget);
