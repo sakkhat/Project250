@@ -51,7 +51,7 @@
             android:name=".broadcaster.ServiceUpater"
             android:enabled="true"
             android:exported="true" />
-        <receiver android:name=".broadcaster.Schedular" />
+        <receiver android:name=".broadcaster.JarvisScheduler" />
 
         <activity android:name=".accessories.About" />
         <activity android:name=".p2p.FileSharing" />
