@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_about"
+    android:background="@color/jarvis"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -11,32 +12,75 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="sakkhat.com.p250.accessories.About">
 
-    <Button
-        android:id="@+id/about_bt_home"
-        android:text="Home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/about_bt_base"
-        android:layout_below="@id/about_bt_home"
-        android:text="base"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:backgroundTint="@color/black"
-        app:srcCompat="@drawable/ic_assist"
-        android:layout_alignParentBottom="true"
+    <LinearLayout
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="144dp"
-        android:layout_marginBottom="88dp"
-        android:id="@+id/floatingActionButton"
-        tools:ignore="VectorDrawableCompat" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="120dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:text="Project 250"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/round_rect_white"
+            android:padding="15dp"
+            android:src="@drawable/sakkhat"
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:text="developed by:"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/about_akash"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Akash"
+            android:textColor="#41ff99"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/about_rafiul"
+            android:text="Rafiul Islam"
+            android:textColor="#41ff99"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/about_source"
+            android:layout_marginTop="40dp"
+            android:text="Source Code"
+            android:textAlignment="center"
+            android:textColor="#47d1e1"
+            android:textSize="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/about_license"
+            android:layout_marginTop="20dp"
+            android:text="LICENSES"
+            android:textColor="#47d1e1"
+            android:textSize="22dp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </RelativeLayout>

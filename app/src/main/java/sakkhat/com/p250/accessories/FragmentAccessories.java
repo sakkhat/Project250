@@ -43,7 +43,6 @@ public class FragmentAccessories extends Fragment{
     private Switch nightLightSwitch;
     private Switch screenAssistSwitch;
     private TextView aboutView;
-    private Button buttonLicense;
 
     @Nullable
     @Override
@@ -87,7 +86,6 @@ public class FragmentAccessories extends Fragment{
         //------------------------------------------------------------------------------------------------------------
 
         aboutView = root.findViewById(R.id.frag_access_aboout);
-        buttonLicense=root.findViewById(R.id.buttonLicense);
     }
 
     private void initEvents(){
@@ -165,17 +163,7 @@ public class FragmentAccessories extends Fragment{
             }
         });
 
-        buttonLicense.setOnClickListener(new  View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent =new Intent(context,About.class);
-                startActivity(intent);
-            }
-        });
     }
-
-
 
 
     private void turnNightLightOn(){
