@@ -1,11 +1,17 @@
 package sakkhat.com.p250.accessories;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.marcoscg.licenser.Library;
+import com.marcoscg.licenser.License;
+import com.marcoscg.licenser.LicenserDialog;
 
 import sakkhat.com.p250.R;
 
@@ -17,6 +23,26 @@ public class About extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
+        new LicenserDialog(this)
+                .setTitle("Licenses")
+                .setCustomNoticeTitle("Notices for files:")
+                .setBackgroundColor(Color.RED) // Optional
+                .setLibrary(new Library("Android Support Libraries",
+                        "https://developer.android.com/topic/libraries/support-library/index.html",
+                        License.APACHE))
+                .setLibrary(new Library("Example Library",
+                        "https://github.com/marcoscgdev",
+                        License.APACHE))
+                .setLibrary(new Library("Licenser",
+                        "https://github.com/marcoscgdev/Licenser",
+                        License.MIT))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // TODO: 11/02/2018
+                    }
+                })
+                .show();
         final Button btHome = (Button) findViewById(R.id.about_bt_home);
         final Button btBase = (Button) findViewById(R.id.about_bt_base);
 

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -42,7 +43,7 @@ public class FragmentAccessories extends Fragment{
     private Switch nightLightSwitch;
     private Switch screenAssistSwitch;
     private TextView aboutView;
-
+    private Button buttonLicense;
 
     @Nullable
     @Override
@@ -86,6 +87,7 @@ public class FragmentAccessories extends Fragment{
         //------------------------------------------------------------------------------------------------------------
 
         aboutView = root.findViewById(R.id.frag_access_aboout);
+        buttonLicense=root.findViewById(R.id.buttonLicense);
     }
 
     private void initEvents(){
@@ -160,6 +162,15 @@ public class FragmentAccessories extends Fragment{
             @Override
             public void onClick(View v) {
                 context.startActivity(new Intent(context, About.class));
+            }
+        });
+
+        buttonLicense.setOnClickListener(new  View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(context,About.class);
+                startActivity(intent);
             }
         });
     }

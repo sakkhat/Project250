@@ -35,7 +35,7 @@ dependencies {
     // api.ai for jarvis : https://github.com/dialogflow/dialogflow-android-client
     compile 'ai.api:sdk:2.0.7@aar'
     compile 'ai.api:libai:1.6.12'
-
+    compile 'com.github.marcoscgdev:Licenser:1.0.5'
     //https://android-arsenal.com/details/1/5837
     compile 'lib.kashif:folderpicker:2.4'
 }
