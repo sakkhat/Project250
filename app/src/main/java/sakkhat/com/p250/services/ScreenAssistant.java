@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -42,7 +43,6 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
     public static final String ACTION_NIGHT_ON = "s_a_n_off";
     public static final String ACTION_NIGHT_OFF = "s_a_n_on";
     public static final String ACTION_ASSIST_OFF = "s_a_off";
-    public static final String ACTION_RETURN_BASE = "s_a_base";
 
     private static final int FLOAT_ASSIST = 1;
     private static final int POP_WINDOW  = 2;
@@ -52,12 +52,12 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
     private GestureDetector detector;
 
     private View floatingAssist;
-    private CardView popCard, floatIcon;
+    private CardView popCard,floatIcon;
 
     private ServiceSwitcher switcherBroadcaster;
     private IntentFilter intentFilter;
 
-    private CardView btNight, btSwitch, btBase, btEmergency, btMinimize;
+    private CardView btNight, btSwitch, btBase, btHome, btMinimize;
     private boolean isNightOn;
 
 
@@ -171,16 +171,28 @@ public class ScreenAssistant extends Service implements AIButton.AIButtonListene
         btBase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ACTION_RETURN_BASE);
-                sendBroadcast(i);
+                Intent base = getPackageManager().getLaunchIntentForPackage("sakkhat.com.p250");
+                if(base != null){
+                    base.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    Log.w(Jarvis.JARVIS_SCREEN, "going to base application");
+                    startActivity(base);
+                }
+                else{
+                    Log.e(Jarvis.JARVIS_SCREEN, "project package not found");
+                }
             }
         });
 
 
-        btEmergency = popCard.findViewById(R.id.assist_pop_emergency);
-        btEmergency.setOnClickListener(new View.OnClickListener() {
+        btHome = popCard.findViewById(R.id.assist_pop_emergency);
+        btHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent home = new Intent(Intent.ACTION_MAIN, null);
+                home.addCategory(Intent.CATEGORY_HOME);
+                home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                Log.w(Jarvis.JARVIS_SCREEN, "going to home screen");
+                startActivity(home);
             }
         });
 

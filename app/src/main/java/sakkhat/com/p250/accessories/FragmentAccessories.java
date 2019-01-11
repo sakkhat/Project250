@@ -1,18 +1,12 @@
 package sakkhat.com.p250.accessories;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -24,12 +18,10 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import sakkhat.com.p250.R;
 import sakkhat.com.p250.broadcaster.ServiceUpater;
-import sakkhat.com.p250.helper.FileUtil;
 import sakkhat.com.p250.helper.FragmentListener;
 import sakkhat.com.p250.helper.Memory;
 import sakkhat.com.p250.services.ScreenAssistant;
@@ -167,7 +159,7 @@ public class FragmentAccessories extends Fragment{
         aboutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                context.startActivity(new Intent(context, About.class));
             }
         });
     }

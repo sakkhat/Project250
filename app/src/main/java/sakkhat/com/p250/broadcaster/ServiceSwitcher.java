@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -21,8 +22,6 @@ import sakkhat.com.p250.services.ScreenAssistant;
  */
 
 public class ServiceSwitcher extends BroadcastReceiver{
-
-    private TextToSpeech tts;
 
     public ServiceSwitcher(){
 
@@ -44,6 +43,8 @@ public class ServiceSwitcher extends BroadcastReceiver{
                 i.putExtra(ScreenAssistant.ACTION_NIGHT_OFF, ContextCompat.getColor(context, R.color.white));
                 context.startService(i);
 
+                Log.d(Jarvis.JARVIS_SCREEN, "night light turned off");
+
             } break;
 
             case ScreenAssistant.ACTION_NIGHT_ON:{
@@ -55,11 +56,8 @@ public class ServiceSwitcher extends BroadcastReceiver{
                 i.setAction(ScreenAssistant.ACTION_NIGHT_ON);
                 i.putExtra(ScreenAssistant.ACTION_NIGHT_ON, ContextCompat.getColor(context, R.color.bg_wheel));
                 context.startService(i);
-            } break;
 
-            case ScreenAssistant.ACTION_RETURN_BASE:{
-                Intent i = new Intent(context.getPackageManager().getLaunchIntentForPackage("com.sakkhat.p250"));
-                context.startActivity(i);
+                Log.d(Jarvis.JARVIS_SCREEN, "night light turned on");
             } break;
         }
 
