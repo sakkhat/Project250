@@ -14,15 +14,10 @@
 
 ## Supported library:
  * ### [Cursor Wheel Layout](https://github.com/BCsl/CursorWheelLayout)
- 	* #### [License](assets/appache20.txt)
  * ### [ Circle Image View ](https://github.com/hdodenhof/CircleImageView)
- 	* #### [License](assets/appache20.txt)
- * ### [Dialogflow](https://api.ai)
- 	* #### [License](assets/appache20.txt)
- * ### [Folder Picker]()
- 	* #### [License](assets/appache20.txt)
+ * ### [Dialogflow](https://github.com/dialogflow/dialogflow-android-client)
+ * ### [Folder Picker](https://github.com/kashifo/android-folder-picker-library)
  * ### [Licenser](https://github.com/marcoscgdev/Licenser)
- 	* #### [License](https://github.com/marcoscgdev/Licenser/blob/master/LICENSE)
 
 
 ## Source Code License:

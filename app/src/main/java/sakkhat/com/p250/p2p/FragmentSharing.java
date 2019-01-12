@@ -19,7 +19,7 @@ public class FragmentSharing extends Fragment{
     private View root; // fragment root view
     private Context context; // base context
 
-    private Button button;
+    private Button button, pcShare;
 
     @Nullable
     @Override
@@ -38,6 +38,14 @@ public class FragmentSharing extends Fragment{
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(context,FileSharing.class));
+            }
+        });
+
+        pcShare = root.findViewById(R.id.frag_share_goto_pcShare);
+        pcShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                context.startActivity(new Intent(context, PCSharing.class));
             }
         });
     }

@@ -64,13 +64,10 @@ public class About extends AppCompatActivity {
             public void onClick(View v) {
                new LicenserDialog(About.this)
                         .setTitle("Licenses")
-                        .setCustomNoticeTitle("Notices for files:")
+                        .setCustomNoticeTitle("Library notices:")
                         .setBackgroundColor(R.color.jarvis) // Optional
                         .setLibrary(new Library("Android Support Libraries",
                                 "https://developer.android.com/topic/libraries/support-library/index.html",
-                                License.APACHE))
-                        .setLibrary(new Library("Licenser",
-                                "https://github.com/marcoscgdev",
                                 License.APACHE))
                         .setLibrary(new Library("Cursor Wheel Layout",
                                 "https://github.com/BCsl/CursorWheelLayout",
@@ -81,6 +78,12 @@ public class About extends AppCompatActivity {
                         .setLibrary(new Library("DialogFlow",
                                 "https://github.com/dialogflow/dialogflow-android-client",
                                 License.APACHE))
+						.setLibrary(new Library("Folder Picker",
+                                "https://github.com/kashifo/android-folder-picker-library",
+                                License.APACHE))
+						.setLibrary(new Library("Licenser",
+                                "https://github.com/marcoscgdev",
+                                License.MIT))
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

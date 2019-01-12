@@ -69,20 +69,17 @@ public class Jarvis {
                             case  AudioManager.RINGER_MODE_NORMAL:
                                 // cancel previous one and schedule ring mode
                                 scheduler.cancelSchedule(context);
-                                scheduler.setSchedule(context,
-                                        System.currentTimeMillis()+millisec,Mode.RING_MODE);
+                                scheduler.setSchedule(context,millisec,Mode.RING_MODE);
                                 break;
                             case AudioManager.RINGER_MODE_SILENT:
                                 // cancel previous one and schedule for silent mode
                                 scheduler.cancelSchedule(context);
-                                scheduler.setSchedule(context,
-                                        System.currentTimeMillis()+millisec,Mode.SILENT_MODE);
+                                scheduler.setSchedule(context,millisec,Mode.SILENT_MODE);
                                 break;
                             case AudioManager.RINGER_MODE_VIBRATE:
                                 // cancel previous one and schedule for vibrate mode
                                 scheduler.cancelSchedule(context);
-                                scheduler.setSchedule(context,
-                                        System.currentTimeMillis()+millisec,Mode.VIBRATE_MODE);
+                                scheduler.setSchedule(context,millisec,Mode.VIBRATE_MODE);
                                 break;
                         }
                     }

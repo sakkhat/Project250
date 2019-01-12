@@ -55,6 +55,7 @@
 
         <activity android:name=".accessories.About" />
         <activity android:name=".p2p.FileSharing" />
+        <activity android:name=".p2p.PCSharing"></activity>
     </application>
 
 </manifest>

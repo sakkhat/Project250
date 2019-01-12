@@ -17,11 +17,30 @@
 
     <Button
         android:id="@+id/frag_share_gotoShare"
-        android:text="share"
-        android:textSize="25dp"
+        android:text="mobile share"
+        android:textSize="20dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/round_rect_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
         android:layout_marginTop="50dp"
+        android:src="@drawable/ic_pc_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/frag_share_goto_pcShare"
+        android:text="pc share"
+        android:textSize="20dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/round_rect_white"

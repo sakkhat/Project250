@@ -9,6 +9,8 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import java.sql.Time;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import sakkhat.com.p250.jarvis.Jarvis;
 
@@ -33,11 +35,12 @@ public class JarvisScheduler extends BroadcastReceiver {
     }
 
     public void setSchedule(Context context, Long millisec, String action) {
+        Calendar cl = new GregorianCalendar();
         AlarmManager am =(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, JarvisScheduler.class);
         i.setAction(action);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), millisec, pi);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, cl.getTimeInMillis(),millisec, pi);
     }
 
     public void cancelSchedule(Context context){

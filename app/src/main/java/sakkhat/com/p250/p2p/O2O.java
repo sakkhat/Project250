@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import sakkhat.com.p250.structure.IOItem;
 
@@ -30,6 +31,7 @@ public class O2O {
     public static final int FILE_RECEIVE_REQUEST = 14;
     public static final int FILE_RECEIVE_PROGRESS = 15;
     public static final int FILE_SENT_PROGRESS = 16;
+    public static final int SOCKET_ERROR = 17;
     public static final int SOCKET_CLOSED = 18;
 
     public static class Server extends Thread{
@@ -60,6 +62,10 @@ public class O2O {
 
         private Handler handler;
         private InetAddress host;
+
+        private int port = -1;
+        private String address;
+
         public Client(Handler handler, InetAddress host){
             this.handler = handler;
             this.host = host;
@@ -67,13 +73,28 @@ public class O2O {
             this.start();
         }
 
+
+        public Client(Handler handler, String address, int port){
+            this.handler = handler;
+            this.address = address;
+            this.port = port;
+
+        }
+
         @Override
         public void run(){
+            Socket socket;
             try {
-                Socket socket = new Socket(host, PORT);
+                if(port == -1){
+                    socket = new Socket(host, PORT);
+                } else{
+                    socket = new Socket(address, port);
+                }
+
                 handler.obtainMessage(SOCKET_ESTABLISHED, socket).sendToTarget();;
             } catch (IOException e){
                 Log.e(TAG, e.toString());
+                handler.obtainMessage(SOCKET_ERROR).sendToTarget();
             }
         }
     }

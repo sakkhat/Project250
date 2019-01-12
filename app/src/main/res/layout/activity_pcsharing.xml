@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_pcsharing"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/jarvis"
+    tools:context="sakkhat.com.p250.p2p.PCSharing">
+
+    <LinearLayout
+        android:id="@+id/pc_share_before_view"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/pc_share_ip_messenger"
+            android:text="Download IP Messenger"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/round_rect_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/pc_share_ip_info"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:text="IP Info:"
+            android:layout_marginTop="20dp"
+            android:textSize="17dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/pc_share_ip_address"
+            android:hint="IP Address"
+            android:text="192.168.0.1"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:inputType="textUri"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/pc_share_ip_port"
+            android:hint="8080"
+            android:text="8080"
+            android:inputType="number"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/pc_share_request"
+            android:text="request to chat box"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:textColor="@color/darkGreen"
+            android:background="@drawable/round_rect_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/pc_share_after_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_marginTop="40dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_file_upload"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+        <TextView
+            android:id="@+id/pc_share_sending_fname"
+            android:padding="5dp"
+            android:layout_marginTop="40dp"
+            android:text="No File Selected"
+            android:textColor="@color/white"
+            android:textSize="17dp"
+            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textAlignment="center"
+            android:layout_marginStart="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <ProgressBar
+            android:id="@+id/pc_share_sending_progress"
+            android:layout_below="@id/pc_share_sending_fname"
+            android:layout_width="match_parent"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_marginStart="55dp"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_marginTop="150dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_file_download"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+        <TextView
+            android:id="@+id/pc_share_receiving_fname"
+            android:layout_marginTop="150dp"
+            android:padding="5dp"
+            android:text="Receiving : None"
+            android:textColor="@color/white"
+            android:textSize="17dp"
+            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:textAlignment="center"
+            android:layout_marginStart="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <ProgressBar
+            android:id="@+id/pc_share_receiving_progress"
+            android:layout_below="@id/pc_share_receiving_fname"
+            android:layout_width="match_parent"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_marginStart="55dp"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/pc_share_sent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_sent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="15dp"
+            tools:ignore="VectorDrawableCompat" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/pc_share_file_pick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/fp_folder"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="90dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/pc_share_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="normal"
+            app:backgroundTint="@color/red"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="170dp"
+            android:layout_marginBottom="15dp"/>
+    </RelativeLayout>
+</RelativeLayout>
