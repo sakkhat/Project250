@@ -104,7 +104,7 @@ public class PCSharing extends AppCompatActivity implements Handler.Callback{
                 }
                 else{
                     String host = ipAddress.getText().toString().trim();
-                    int port = Integer.parseInt(ipAddress.getText().toString().trim());
+                    int port = Integer.parseInt(ipPort.getText().toString().trim());
                     new O2OPC.RequestToPC(host, port, handler);
                 }
             }

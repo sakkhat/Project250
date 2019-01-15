@@ -4,7 +4,9 @@
  * ### Accessories:
    * #### Night Light
    * #### Screen Assistant
- * ### File Sharing
+ * ### Sharing:
+   * #### Android to Android file sharing
+   * #### Android to PC ([IP Messenfer](https://github.com/rafiulgits/IP-Messenger/releases) ) file sharing and controlling
  * ### Jarvis AI:
    * #### Jokes 
    * #### Ringer mode change
@@ -13,18 +15,18 @@
    
 
 ## Supported library:
- * ### [Cursor Wheel Layout](https://github.com/BCsl/CursorWheelLayout)
- * ### [ Circle Image View ](https://github.com/hdodenhof/CircleImageView)
- * ### [Dialogflow](https://github.com/dialogflow/dialogflow-android-client)
- * ### [Folder Picker](https://github.com/kashifo/android-folder-picker-library)
- * ### [Licenser](https://github.com/marcoscgdev/Licenser)
+ * #### [Cursor Wheel Layout](https://github.com/BCsl/CursorWheelLayout)
+ * #### [ Circle Image View ](https://github.com/hdodenhof/CircleImageView)
+ * #### [Dialogflow](https://github.com/dialogflow/dialogflow-android-client)
+ * #### [Folder Picker](https://github.com/kashifo/android-folder-picker-library)
+ * #### [Licenser](https://github.com/marcoscgdev/Licenser)
 
 
 ## Source Code License:
 ```
 MIT License
 
-Copyright (c) 2018 Sakkhat
+Copyright (c) 2019 Sakkhat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
