@@ -6,7 +6,7 @@
    * #### Screen Assistant
  * ### Sharing:
    * #### Android to Android file sharing
-   * #### Android to PC ([IP Messenfer](https://github.com/rafiulgits/IP-Messenger/releases) ) file sharing and controlling
+   * #### Android to PC ( [IP Messenger](https://github.com/rafiulgits/IP-Messenger/releases) ) file sharing and controlling
  * ### Jarvis AI:
    * #### Jokes 
    * #### Ringer mode change
