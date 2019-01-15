@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.Time;
 
 import sakkhat.com.p250.structure.IOItem;
 
@@ -41,7 +42,7 @@ public class O2O {
 
         public Server(Handler handler){
             this.handler = handler;
-
+            this.setName(TAG);
             this.start();
         }
         @Override
@@ -69,7 +70,7 @@ public class O2O {
         public Client(Handler handler, InetAddress host){
             this.handler = handler;
             this.host = host;
-
+            this.setName(TAG);
             this.start();
         }
 
@@ -109,7 +110,7 @@ public class O2O {
             this.handler = handler;
             this.socket = socket;
             this.path = path;
-
+            this.setName(TAG);
             Log.d(TAG, "receiver constructed");
 
             this.start();
@@ -172,6 +173,7 @@ public class O2O {
             this.handler = handler;
             this.socket = socket;
             this.file = file;
+            this.setName(TAG);
 
             this.start();
         }

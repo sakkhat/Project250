@@ -10,66 +10,62 @@
 
     <LinearLayout
         android:id="@+id/pc_share_before_view"
-        android:visibility="gone"
         android:orientation="vertical"
-        android:layout_alignParentBottom="true"
+        android:visibility="visible"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <Button
             android:id="@+id/pc_share_ip_messenger"
-            android:text="Download IP Messenger"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
+            android:text="download ip messenger"
+            android:layout_marginTop="50dp"
             android:background="@drawable/round_rect_white"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/pc_share_ip_info"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:text="IP Info:"
-            android:layout_marginTop="20dp"
-            android:textSize="17dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/pc_share_ip_address"
-            android:hint="IP Address"
-            android:text="192.168.0.1"
-            android:layout_marginTop="30dp"
-            android:textColor="@color/white"
+            android:maxLines="1"
+            android:layout_marginTop="40dp"
             android:textAlignment="center"
+            android:textColor="@color/white"
             android:inputType="textUri"
+            android:text="192.168.1.4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/pc_share_ip_port"
-            android:hint="8080"
-            android:text="8080"
-            android:inputType="number"
-            android:textColor="@color/white"
+            android:maxLines="1"
             android:textAlignment="center"
+            android:textColor="@color/white"
+            android:inputType="number"
+            android:text="9876"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button
             android:id="@+id/pc_share_request"
-            android:text="request to chat box"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:textColor="@color/darkGreen"
-            android:background="@drawable/round_rect_white"
+            android:text="Request"
+            android:background="@drawable/round_rect"
+            android:textColor="@color/white"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+
     <RelativeLayout
         android:id="@+id/pc_share_after_view"
+        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
         <ImageView
             android:layout_marginTop="40dp"
             android:padding="5dp"
@@ -127,6 +123,18 @@
             android:layout_marginStart="55dp"
             android:layout_marginEnd="5dp"
             android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/pc_share_pc_shutdown"
+            android:text="Shut down pc"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/round_rect_white"
+            android:layout_marginTop="280dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/pc_share_sent"
             android:layout_width="wrap_content"
@@ -164,5 +172,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="170dp"
             android:layout_marginBottom="15dp"/>
-    </RelativeLayout>
+        </RelativeLayout>
+
+
 </RelativeLayout>

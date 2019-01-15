@@ -142,7 +142,8 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="15dp"
+            tools:ignore="VectorDrawableCompat" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/file_share_p2p_file_pick"
