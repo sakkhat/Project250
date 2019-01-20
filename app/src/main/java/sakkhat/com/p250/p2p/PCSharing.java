@@ -89,7 +89,7 @@ public class PCSharing extends AppCompatActivity implements Handler.Callback{
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://github.com/rafiulgits/IP-Messenger"));
-                Intent.createChooser(intent, "action chooser");
+                startActivity(Intent.createChooser(intent, "action chooser"));
             }
         });
 
