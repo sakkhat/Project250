@@ -21,18 +21,17 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="Project 250"
+            android:text="arc"
             android:textColor="@color/white"
             android:textAlignment="center"
-            android:textSize="25dp"
+            android:textSize="35dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <ImageView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/round_rect_white"
             android:padding="15dp"
-            android:src="@drawable/sakkhat"
+            android:src="@drawable/arc_icon"
             android:layout_width="80dp"
             android:layout_height="80dp" />
         <TextView
