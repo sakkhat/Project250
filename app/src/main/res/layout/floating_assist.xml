@@ -104,7 +104,7 @@
 
                     <ImageView
                         android:padding="5dp"
-                        android:src="@drawable/ic_jarvis"
+                        android:src="@drawable/app_logo"
                         android:layout_width="50dp"
                         android:layout_height="50dp" />
 
